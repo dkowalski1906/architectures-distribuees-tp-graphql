@@ -1,0 +1,288 @@
+openapi: 3.0.3
+info:
+  title: Schedule Service API
+  description: API to manage movie schedules, with admin checks via User service and movie details from Movie service.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3202
+paths:
+  /{user_id}/schedule/json:
+    get:
+      summary: Get full schedule in JSON
+      description: Returns the complete schedule. Admin access required.
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Full schedule
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleEntry'
+        '403':
+          description: Unauthorized - admin access required
+        '401':
+          description: Unable to verify user
+        '503':
+          description: User service unreachable
+
+  /{user_id}/schedule/{date}:
+    get:
+      summary: Get movies for a specific date
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: date
+          in: path
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: List of movie IDs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '403':
+          description: Unauthorized - admin access required
+        '500':
+          description: No movies found with this date
+
+  /{user_id}/schedule/{date}/details:
+    get:
+      summary: Get movie details for a specific date
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: date
+          in: path
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: List of movie details for the date
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleDateDetails'
+        '403':
+          description: Unauthorized - admin access required
+        '404':
+          description: Date not found
+
+  /{user_id}/schedule/by_movie:
+    get:
+      summary: Get schedule by movie ID
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Dates for the given movie
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  movie_id:
+                    type: string
+                  dates:
+                    type: array
+                    items:
+                      type: string
+        '403':
+          description: Unauthorized - admin access required
+        '404':
+          description: No schedule found for this movie ID
+
+  /{user_id}/schedule/{date_id}:
+    post:
+      summary: Add a new schedule date
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                movies:
+                  type: array
+                  items:
+                    type: string
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: date_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Schedule date added
+        '403':
+          description: Unauthorized - admin access required
+        '500':
+          description: Schedule date already exists
+
+    delete:
+      summary: Delete a schedule date
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: date_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Schedule date deleted
+        '403':
+          description: Unauthorized - admin access required
+        '404':
+          description: Date not found
+
+  /{user_id}/schedule/{date}/movies:
+    post:
+      summary: Add a movie to a date
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                movie_id:
+                  type: string
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: date
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Movie added
+        '403':
+          description: Unauthorized - admin access required
+        '400':
+          description: Missing movie_id
+        '500':
+          description: Movie already scheduled for this date
+
+  /{user_id}/schedule/{date_id}/movies/{movie_id}:
+    delete:
+      summary: Delete a movie from a specific date
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: date_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: movie_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Movie removed from date
+        '403':
+          description: Unauthorized - admin access required
+        '404':
+          description: Movie or date not found
+
+  /{user_id}/schedule/movies/{movie_id}:
+    delete:
+      summary: Delete a movie from all dates
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: movie_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Movie removed from all dates
+        '403':
+          description: Unauthorized - admin access required
+        '404':
+          description: Movie not found in any date
+
+components:
+  schemas:
+    ScheduleEntry:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        movies:
+          type: array
+          items:
+            type: string
+    ScheduleDateDetails:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        movies:
+          type: array
+          items:
+            $ref: '#/components/schemas/MovieDetail'
+    MovieDetail:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        rating:
+          type: number
