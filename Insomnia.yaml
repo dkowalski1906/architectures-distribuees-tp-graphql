@@ -1,1588 +1,28 @@
 type: collection.insomnia.rest/5.0
-name: Insomnia_Collection_TP_REST
+name: Insomnia_Collection_TP_GraphQL
 meta:
-  id: wrk_f4e993f9eecc437a9a44229448aeea4d
-  created: 1758894639014
-  modified: 1758894707416
+  id: wrk_9264417630da4cefbc72ed73aa8974b0
+  created: 1758402662074
+  modified: 1758894715943
   description: ""
 collection:
-  - name: Movies
-    meta:
-      id: fld_c031e16a696d4ef1bd9f4d2312d21b27
-      created: 1758402679614
-      modified: 1758402679614
-      sortKey: -1758402679614
-      description: ""
-    children:
-      - url: "{{ _.movie_url }}"
-        name: Movies - Home
-        meta:
-          id: req_9e40050c936647a09dc7e14d66dd7a4a
-          created: 1758402707649
-          modified: 1758661192333
-          isPrivate: false
-          description: ""
-          sortKey: -1758402711298
-        method: GET
-        parameters:
-          - name: ""
-            value: ""
-            disabled: false
-            id: pair_1eb8ba73c92646d7acef68b7e928f377
-        headers:
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.movie_url }}/chris_rivers/movies/json"
-        name: Movies - JSON - Success
-        meta:
-          id: req_ab3628abd8474012a8564df3de28842c
-          created: 1758403278783
-          modified: 1759262245870
-          isPrivate: false
-          description: ""
-          sortKey: -1758402711198
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.movie_url
-          }}/chris_rivers/movies/39ab85e5-5e8e-4dc5-afea-65dc368bd7aa"
-        name: Movies - Add movie - Success
-        meta:
-          id: req_d5230fd9c965456d9297317483dc5a33
-          created: 1758403310927
-          modified: 1759262294384
-          isPrivate: false
-          description: ""
-          sortKey: -1758297176891.125
-        method: POST
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            	"director": "Director test",
-            	"id": "39ab85e5-5e8e-4dc5-afea-65dc368bd7aa",
-            	"rating": 4.1,
-            	"title": "Title test"
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.movie_url
-          }}/chris_rivers/movies/a8034f44-aee4-44cf-b32c-74cf452aaaaet"
-        name: Movies - Movie by ID - Failure
-        meta:
-          id: req_e412b9cd3ff84195929137b19b3a67ae
-          created: 1758403385120
-          modified: 1759262491747
-          isPrivate: false
-          description: ""
-          sortKey: -1758346426241
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.movie_url }}/chris_rivers/movies/by_title?title=The Night Before"
-        name: Movies - Movie by title - Success
-        meta:
-          id: req_9cb3e6b60b2147769b5e38e61535f770
-          created: 1758403456833
-          modified: 1759262332510
-          isPrivate: false
-          description: ""
-          sortKey: -1758318283812.5
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.movie_url }}/chris_rivers/movies/moviebytitle?title=The Night
-          Beforet"
-        name: Movies - Movie by title - Failure
-        meta:
-          id: req_07502204aa4f4b0fa84b2b7ae5d76d7f
-          created: 1758403535901
-          modified: 1759262513350
-          isPrivate: false
-          description: ""
-          sortKey: -1758304212598.25
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.movie_url
-          }}/chris_rivers/movies/7daf7208-be4d-4944-a3ae-c1c2f516f3e6"
-        name: Movies - Add movie - Failure
-        meta:
-          id: req_48732a0ebb1a4f749b727ab98b242c75
-          created: 1758404158584
-          modified: 1759262538986
-          isPrivate: false
-          description: ""
-          sortKey: -1758293659137.5625
-        method: POST
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            	"director": "Director test",
-            	"id": "39ab85e5-5e8e-4dc5-afea-65dc368bd7aa",
-            	"rating": 4.1,
-            	"title": "Title test"
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.movie_url
-          }}/chris_rivers/movies/276c79ec-a26a-40a6-b3d3-fb242a5947b6"
-        name: Movies - Movie by ID - Success
-        meta:
-          id: req_c2b4d8ead36e4265aa2ff18eac694827
-          created: 1758404286810
-          modified: 1759262268861
-          isPrivate: false
-          description: ""
-          sortKey: -1758374568719.5
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.movie_url
-          }}/chris_rivers/movies/276c79ec-a26a-40a6-b3d3-fb242a5947b6/2.3"
-        name: Movies - Update movie - Success
-        meta:
-          id: req_779e20becebe441aa785bfe0302630a1
-          created: 1758404319621
-          modified: 1759262344545
-          isPrivate: false
-          description: ""
-          sortKey: -1758291900260.7812
-        method: PUT
-        body:
-          mimeType: application/json
-          text: ""
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.movie_url
-          }}/chris_rivers/movies/276c79ec-a26a-40a6-b3d3-fb242a5947b8/2.3"
-        name: Movies - Update movie - Failure
-        meta:
-          id: req_fca6c217d71e49eca4ec205ce97e2554
-          created: 1758404401275
-          modified: 1759262569110
-          isPrivate: false
-          description: ""
-          sortKey: -1758291020822.3906
-        method: PUT
-        body:
-          mimeType: application/json
-          text: ""
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.movie_url
-          }}/chris_rivers/movies/267eedb8-0f5d-42d5-8f43-72426b9fb3e6"
-        name: Movies - Delete movie - Success
-        meta:
-          id: req_18f017872b5b46be8a6e87cf3fe9cb71
-          created: 1758404456024
-          modified: 1759262354943
-          isPrivate: false
-          description: ""
-          sortKey: -1758290581103.1953
-        method: DELETE
-        body:
-          mimeType: application/json
-          text: ""
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.movie_url
-          }}/chris_rivers/movies/267eedb8-0f5d-42d5-8f43-72426b9fb3e9"
-        name: Movies - Delete movie - Failure
-        meta:
-          id: req_16e41d4401a543a19c31c911cc8d74e9
-          created: 1758404521118
-          modified: 1759262581388
-          isPrivate: false
-          description: ""
-          sortKey: -1758290361243.5977
-        method: DELETE
-        body:
-          mimeType: application/json
-          text: ""
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.movie_url
-          }}/peter_curley/movies/39ab85e5-5e8e-4dc5-afea-65dc368bd7aa"
-        name: Movies - Add movie - Failure - Is not admin
-        meta:
-          id: req_d73f4082c2c54c69ac15b2cc04f9cf83
-          created: 1759262885823
-          modified: 1759262893612
-          isPrivate: false
-          description: ""
-          sortKey: -1758296297452.7344
-        method: POST
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            	"director": "Director test",
-            	"id": "39ab85e5-5e8e-4dc5-afea-65dc368bd7aa",
-            	"rating": 4.1,
-            	"title": "Title test"
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.movie_url
-          }}/peter_curley/movies/267eedb8-0f5d-42d5-8f43-72426b9fb3e6"
-        name: Movies - Delete movie - Failure - Is not admin
-        meta:
-          id: req_ddd9e91bb917485bb32bf45b8261b653
-          created: 1759262920321
-          modified: 1759262923049
-          isPrivate: false
-          description: ""
-          sortKey: -1758290526138.296
-        method: DELETE
-        body:
-          mimeType: application/json
-          text: ""
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-  - name: Schedules
-    meta:
-      id: fld_6bfe97a4c01346f0a9de874e33d7b46a
-      created: 1758402694637
-      modified: 1758402694637
-      sortKey: -1758402694637
-      description: ""
-    children:
-      - url: "{{ _.schedule_url }}"
-        name: Schedules - Home
-        meta:
-          id: req_cefa442940254b5497e8e7dda52c7960
-          created: 1758659972290
-          modified: 1758662308088
-          isPrivate: false
-          description: ""
-          sortKey: -1758659972290
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.schedule_url }}/chris_rivers/schedule/json"
-        name: Schedules - JSON
-        meta:
-          id: req_e3083ab7962646589c8492f11918e9ee
-          created: 1758660060044
-          modified: 1759262976753
-          isPrivate: false
-          description: ""
-          sortKey: -1758659972190
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.schedule_url }}/chris_rivers/schedule/20151130"
-        name: Schedules - Schedules by date - Success
-        meta:
-          id: req_8f8bff2bf5cd4a3db6411b926793edbd
-          created: 1758660178826
-          modified: 1759263004224
-          isPrivate: false
-          description: ""
-          sortKey: -1758659972090
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.schedule_url }}/chris_rivers/schedule/20151137"
-        name: Schedules - Schedules by date - Failure
-        meta:
-          id: req_07aa5da2ccea40d292d998e900530ba5
-          created: 1758660204209
-          modified: 1759263197314
-          isPrivate: false
-          description: ""
-          sortKey: -1758531341694
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.schedule_url }}/chris_rivers/schedule/20151130/details"
-        name: Schedules - Schedules by date with details - Success
-        meta:
-          id: req_322c3515a2a6457284f11d8a091e9483
-          created: 1758660403273
-          modified: 1759263014773
-          isPrivate: false
-          description: ""
-          sortKey: -1758531341594
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.schedule_url }}/chris_rivers/schedule/20151137/details"
-        name: Schedules - Schedules by date with details - Failure 1
-        meta:
-          id: req_03cb31be2d47443c9a61be4889640b88
-          created: 1758660672055
-          modified: 1759263203826
-          isPrivate: false
-          description: ""
-          sortKey: -1758467026446
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.schedule_url }}/chris_rivers/schedule/20151130/details"
-        name: Schedules - Schedules by date with details - Failure 2
-        meta:
-          id: req_b32e7e90419e4883be6fd00c1e86128a
-          created: 1758660715608
-          modified: 1759263210930
-          isPrivate: false
-          description: ""
-          sortKey: -1758434868872
-        method: GET
-        body:
-          mimeType: text/plain
-          text: to test this failure, do not open the microservice movie
-        headers:
-          - name: Content-Type
-            value: text/plain
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.schedule_url }}/chris_rivers/schedule/20151130/details"
-        name: Schedules - Schedules by date with details - Failure 3
-        meta:
-          id: req_08f04281440c48cfb2151dacd23a1437
-          created: 1758660860707
-          modified: 1759263235096
-          isPrivate: false
-          description: ""
-          sortKey: -1758418790085
-        method: GET
-        body:
-          mimeType: text/plain
-          text: to test this failure, change the id of one movie into the db
-        headers:
-          - name: Content-Type
-            value: text/plain
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.schedule_url
-          }}/chris_rivers/schedule/by_movie?id=267eedb8-0f5d-42d5-8f43-72426b9f\
-          b3e6"
-        name: Schedules - Schedules by movie ID - Success
-        meta:
-          id: req_fad7f0463c5447fdbc4acaa98ce3046e
-          created: 1758662692705
-          modified: 1759263130808
-          isPrivate: false
-          description: ""
-          sortKey: -1758410750691.5
-        method: GET
-        body:
-          mimeType: application/json
-          text: ""
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.schedule_url
-          }}/chris_rivers/schedule?id=267eedb8-0f5d-42d5-8f43-72426b9fb3et"
-        name: Schedules - Schedules by movie ID - Failure
-        meta:
-          id: req_69278f1721734c9093039f868af93804
-          created: 1758663046111
-          modified: 1759263251531
-          isPrivate: false
-          description: ""
-          sortKey: -1758406730994.75
-        method: GET
-        body:
-          mimeType: text/plain
-          text: ""
-        headers:
-          - name: Content-Type
-            value: text/plain
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.schedule_url }}/chris_rivers/schedule/20151134"
-        name: Schedules - Add schedule - Success
-        meta:
-          id: req_c976dc6684fd432aaaff10eda61530b9
-          created: 1758663120940
-          modified: 1759263140200
-          isPrivate: false
-          description: ""
-          sortKey: -1758404721146.375
-        method: POST
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            "movies":
-            	[
-            		"720d006c-3a57-4b6a-b18f-9b713b073f3c",
-            		"a8034f44-aee4-44cf-b32c-74cf452aaaae",
-            		"39ab85e5-5e8e-4dc5-afea-65dc368bd7ab"
-            	]
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.schedule_url }}/chris_rivers/schedule/20151130"
-        name: Schedules - Add schedule - Failure
-        meta:
-          id: req_3c61f4b514534b659ce4e741cb8820b0
-          created: 1758663465259
-          modified: 1759263259754
-          isPrivate: false
-          description: ""
-          sortKey: -1758403716222.1875
-        method: POST
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            "movies":
-            	[
-            		"720d006c-3a57-4b6a-b18f-9b713b073f3c",
-            		"a8034f44-aee4-44cf-b32c-74cf452aaaae",
-            		"39ab85e5-5e8e-4dc5-afea-65dc368bd7ab"
-            	]
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.schedule_url }}/chris_rivers/schedule/20151201/movies"
-        name: Schedules - Add movie to schedule - Success
-        meta:
-          id: req_ba38686fa3c64bdc98c03a3e65e23615
-          created: 1758663571005
-          modified: 1759263147246
-          isPrivate: false
-          description: ""
-          sortKey: -1758403716122.1875
-        method: POST
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            "movie_id": "39ab85e5-5e8e-4dc5-afea-65dc368bd7ad"
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.schedule_url }}/chris_rivers/schedule/20151204/movies"
-        name: Schedules - Add movie to schedule - Failure
-        meta:
-          id: req_99ed6e85f0db47d8acff06edc23db568
-          created: 1758663726280
-          modified: 1759263405536
-          isPrivate: false
-          description: ""
-          sortKey: -1758403213710.0938
-        method: POST
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            "movie_id": "96798c08-d19b-4986-a05d-7da856efb697"
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.schedule_url }}/chris_rivers/schedule/20151134"
-        name: Schedules - Delete schedule - Success
-        meta:
-          id: req_9f7f8de5d73b41b88952acbb38b6149a
-          created: 1758664023798
-          modified: 1759263158058
-          isPrivate: false
-          description: ""
-          sortKey: -1758402962504.0469
-        method: DELETE
-        body:
-          mimeType: application/json
-          text: ""
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.schedule_url }}/chris_rivers/schedule/20151131"
-        name: Schedules - Delete schedule - Failure
-        meta:
-          id: req_31839f2706dd4e80b2762a25eddc0942
-          created: 1758664057554
-          modified: 1759263427035
-          isPrivate: false
-          description: ""
-          sortKey: -1758402836901.0234
-        method: DELETE
-        body:
-          mimeType: application/json
-          text: ""
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.schedule_url
-          }}/chris_rivers/schedule/20151130/movies/720d006c-3a57-4b6a-b18f-9b71\
-          3b073f3c"
-        name: Schedules - Delete movie for a schedule - Success
-        meta:
-          id: req_ad01e023a1ef47698240d9a09c8bd278
-          created: 1758664157756
-          modified: 1759263171259
-          isPrivate: false
-          description: ""
-          sortKey: -1758402774099.5117
-        method: DELETE
-        body:
-          mimeType: application/json
-          text: ""
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.schedule_url
-          }}/chris_rivers/schedule/20151130/movies/720d006c-3a57-4b6ab18f-9b713\
-          b073f3c"
-        name: Schedules - Delete movie for a schedule - Failure
-        meta:
-          id: req_4a56ad3e0f364653a8ee169b9f666834
-          created: 1758664201218
-          modified: 1759263435287
-          isPrivate: false
-          description: ""
-          sortKey: -1758402742698.7559
-        method: DELETE
-        body:
-          mimeType: application/json
-          text: ""
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.schedule_url
-          }}/chris_rivers/schedule/movies/a8034f44-aee4-44cf-b32c-74cf452aaaae"
-        name: Schedules - Delete movie for all dates - Success
-        meta:
-          id: req_b3a65c937a414d8da8956592429164fa
-          created: 1758664305776
-          modified: 1759263177064
-          isPrivate: false
-          description: ""
-          sortKey: -1758402726998.378
-        method: DELETE
-        body:
-          mimeType: application/json
-          text: ""
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.schedule_url
-          }}/chris_rivers/schedule/movies/a8034f44-aee-44cf-b32c-74cf452aaaae"
-        name: Schedules - Delete movie for all dates - Failure
-        meta:
-          id: req_98b8a37068254fa89e9decdc64a41c45
-          created: 1758664342635
-          modified: 1759263442674
-          isPrivate: false
-          description: ""
-          sortKey: -1758402719148.189
-        method: DELETE
-        body:
-          mimeType: application/json
-          text: ""
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.schedule_url }}/peter_curley/schedule/20151134"
-        name: Schedules - Add schedule - Failure - Is not admin
-        meta:
-          id: req_54a3665f5235482194fa32234665154e
-          created: 1759263490658
-          modified: 1759263498911
-          isPrivate: false
-          description: ""
-          sortKey: -1758404218684.2812
-        method: POST
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            "movies":
-            	[
-            		"720d006c-3a57-4b6a-b18f-9b713b073f3c",
-            		"a8034f44-aee4-44cf-b32c-74cf452aaaae",
-            		"39ab85e5-5e8e-4dc5-afea-65dc368bd7ab"
-            	]
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.schedule_url }}/peter_curley/schedule/20151201/movies"
-        name: Schedules - Add movie to schedule - Failure - Is not admin
-        meta:
-          id: req_fe4c8e5347fe42e7b373cd2bcefda12f
-          created: 1759263520830
-          modified: 1759263525088
-          isPrivate: false
-          description: ""
-          sortKey: -1758403464916.1406
-        method: POST
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            "movie_id": "39ab85e5-5e8e-4dc5-afea-65dc368bd7ad"
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.schedule_url }}/peter_curley/schedule/20151134"
-        name: Schedules - Delete schedule - Failure - Is not admin
-        meta:
-          id: req_d156db8b9632478cb4067e66c90b7f11
-          created: 1759263549140
-          modified: 1759263559150
-          isPrivate: false
-          description: ""
-          sortKey: -1758402899702.5352
-        method: DELETE
-        body:
-          mimeType: application/json
-          text: ""
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.schedule_url
-          }}/peter_curley/schedule/20151130/movies/720d006c-3a57-4b6a-b18f-9b71\
-          3b073f3c"
-        name: Schedules - Delete movie for a schedule - Failure - Is not admin
-        meta:
-          id: req_aef5b6285e7c48dcb7add35fe3c8d1b5
-          created: 1759263584980
-          modified: 1759263591921
-          isPrivate: false
-          description: ""
-          sortKey: -1758402758399.1338
-        method: DELETE
-        body:
-          mimeType: application/json
-          text: ""
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.schedule_url
-          }}/peter_curley/schedule/movies/a8034f44-aee4-44cf-b32c-74cf452aaaae"
-        name: Schedules - Delete movie for all dates - Failure - Is not admin
-        meta:
-          id: req_60951968379d47f0a0cfa0b36ad32c86
-          created: 1759263606545
-          modified: 1759263609981
-          isPrivate: false
-          description: ""
-          sortKey: -1758402723073.2834
-        method: DELETE
-        body:
-          mimeType: application/json
-          text: ""
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-  - name: Users
-    meta:
-      id: fld_6b53d5037368494b84f4771e0c8066ed
-      created: 1758404569219
-      modified: 1758404569219
-      sortKey: -1758402679564
-      description: ""
-    children:
-      - url: "{{ _.user_url }}"
-        name: Users- Home
-        meta:
-          id: req_49e79f8520764142b2f705eb9b66eb7d
-          created: 1758404569220
-          modified: 1759260286567
-          isPrivate: false
-          description: ""
-          sortKey: -1758402711298
-        method: GET
-        parameters:
-          - name: ""
-            value: ""
-            disabled: false
-            id: pair_1eb8ba73c92646d7acef68b7e928f377
-        headers:
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.user_url }}/chris_rivers/users/test_id"
-        name: Users- Add user- Success
-        meta:
-          id: req_0ea8beecdd8342e09d5ea4c1c5822628
-          created: 1758404569221
-          modified: 1759261440166
-          isPrivate: false
-          description: ""
-          sortKey: -1758297176891.125
-        method: POST
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            	"id": "test_id",
-              "name": "Test name",
-              "last_active": 1360031201
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.user_url }}/chris_rivers/users/json"
-        name: Users- JSON - Success
-        meta:
-          id: req_2ae44a5a86494e8591867fee7e71311a
-          created: 1758404569221
-          modified: 1759260483258
-          isPrivate: false
-          description: ""
-          sortKey: -1758402711198
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.user_url }}/chris_rivers/users/garret_heatont"
-        name: Users- User by ID - Failure - User ID not found
-        meta:
-          id: req_240aa89044bc4c7cac97859179867741
-          created: 1758404569222
-          modified: 1759260867482
-          isPrivate: false
-          description: ""
-          sortKey: -1758346426241
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.user_url }}/chris_rivers/users/by_name?name=Peter Curley"
-        name: Users- User by name - Success
-        meta:
-          id: req_70caefc2ac5347df9368732fb2e652f9
-          created: 1758404569223
-          modified: 1759260768287
-          isPrivate: false
-          description: ""
-          sortKey: -1758318283812.5
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.user_url }}/chris_rivers/users/dwight_schrute"
-        name: Users- Add user- Failure - User ID already exists
-        meta:
-          id: req_8c17944034344d01836aa1e7a0e22410
-          created: 1758404569223
-          modified: 1759261759206
-          isPrivate: false
-          description: ""
-          sortKey: -1758293659137.5625
-        method: POST
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            	"id": "test_id",
-              "name": "Test name",
-              "last_active": 1360031201
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.user_url }}/chris_rivers/users/by_name?name=Peter Curleyt"
-        name: Users- User by name- Failure - User name not found
-        meta:
-          id: req_bb71ece3768848919c98b507bb8d5b03
-          created: 1758404569223
-          modified: 1759260922708
-          isPrivate: false
-          description: ""
-          sortKey: -1758304212598.25
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.user_url }}/chris_rivers/users/garret_heaton"
-        name: Users- User by ID - Success
-        meta:
-          id: req_d80237e2538a4146b29047de5c6daf0f
-          created: 1758404569224
-          modified: 1759260600320
-          isPrivate: false
-          description: ""
-          sortKey: -1758374568719.5
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.user_url }}/chris_rivers/users/dwight_schrute/New Name"
-        name: Users- Update user- Success
-        meta:
-          id: req_ed29fa278a5d4cc481297fbd0834113b
-          created: 1758404569224
-          modified: 1759261882139
-          isPrivate: false
-          description: ""
-          sortKey: -1758291900260.7812
-        method: PUT
-        body:
-          mimeType: application/json
-          text: ""
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.user_url }}/chris_rivers/users/dwight_schrutet/New Name"
-        name: Users- Update user- Failure
-        meta:
-          id: req_58c3e232c9554c298ab5a43ebe3258fd
-          created: 1758404569225
-          modified: 1759261978854
-          isPrivate: false
-          description: ""
-          sortKey: -1758291020822.3906
-        method: PUT
-        body:
-          mimeType: application/json
-          text: ""
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.user_url }}/chris_rivers/users/dwight_schrute"
-        name: Movies - Delete movie - Success
-        meta:
-          id: req_65d0ed935de44bab8937bf4ee892a55b
-          created: 1758404569225
-          modified: 1759261993756
-          isPrivate: false
-          description: ""
-          sortKey: -1758290581103.1953
-        method: DELETE
-        body:
-          mimeType: application/json
-          text: ""
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.user_url }}/chris_rivers/users/chris_riverst"
-        name: Movies - Delete movie - Failure
-        meta:
-          id: req_3612af79a12a451289cce19bd349b2f6
-          created: 1758404569226
-          modified: 1759262021428
-          isPrivate: false
-          description: ""
-          sortKey: -1758290361243.5977
-        method: DELETE
-        body:
-          mimeType: application/json
-          text: ""
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.user_url }}/chris_rivers/users/bookings"
-        name: Users- Users by booking - Success
-        meta:
-          id: req_708c846ca81b4a628ea77b546e61bf7f
-          created: 1758733970923
-          modified: 1759261350352
-          isPrivate: false
-          description: ""
-          sortKey: -1758300694744.6875
-        method: GET
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            	"date": "20151201",
-            	"movie": "267eedb8-0f5d-42d5-8f43-72426b9fb3e6"
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.user_url }}/peter_curley/users/json"
-        name: Users- JSON - Failure - Is not admin
-        meta:
-          id: req_ca20b1afe37c42eda1e6fff33765209f
-          created: 1759260496870
-          modified: 1759260623077
-          isPrivate: false
-          description: ""
-          sortKey: -1758388639958.75
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.user_url }}/peter_curley/users/garret_heaton"
-        name: Users- User by ID - Failure - Is not admin
-        meta:
-          id: req_6ca758aaa338440f923e69ed27bcdcba
-          created: 1759260634754
-          modified: 1759260655546
-          isPrivate: false
-          description: ""
-          sortKey: -1758360497480.25
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.user_url }}/peter_curley/users/by_name?name=Peter Curley"
-        name: Users- User by name - Failure - Is not admin
-        meta:
-          id: req_4a9dfa347d2d4090a263dfbc1cbd4313
-          created: 1759260782663
-          modified: 1759260813934
-          isPrivate: false
-          description: ""
-          sortKey: -1758311248205.375
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.user_url }}/peter_curley/users/bookings"
-        name: Users- Users by booking - Failure - Is not admin
-        meta:
-          id: req_a4747bb5dc6c4fa0a601ec12ac0a7c4c
-          created: 1759261341636
-          modified: 1759261387051
-          isPrivate: false
-          description: ""
-          sortKey: -1758298935817.9062
-        method: GET
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            	"date": "20151201",
-            	"movie": "267eedb8-0f5d-42d5-8f43-72426b9fb3e6"
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.user_url }}/peter_curley/users/test_id"
-        name: Users- Add user- Success - Failure - Is not admin
-        meta:
-          id: req_3b3edde0b7e64edc9ba893168b843d85
-          created: 1759261489807
-          modified: 1759261505004
-          isPrivate: false
-          description: ""
-          sortKey: -1758295418014.3438
-        method: POST
-        body:
-          mimeType: application/json
-          text: |-
-            {
-            	"id": "test_id",
-              "name": "Test name",
-              "last_active": 1360031201
-            }
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.user_url }}/peter_curley/users/dwight_schrute/New Name"
-        name: Users- Update user- Failure - Is not admin
-        meta:
-          id: req_b77930332c21419d982267c61f9bb021
-          created: 1759261526488
-          modified: 1759261899897
-          isPrivate: false
-          description: ""
-          sortKey: -1758291460541.586
-        method: PUT
-        body:
-          mimeType: application/json
-          text: ""
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.user_url }}/peter_curley/users/chris_rivers"
-        name: Movies - Delete movie - Failure - Is not admin
-        meta:
-          id: req_d9877d956db74ceca90d3f63b4a26c0d
-          created: 1759261550024
-          modified: 1759261553032
-          isPrivate: false
-          description: ""
-          sortKey: -1758290471173.3965
-        method: DELETE
-        body:
-          mimeType: application/json
-          text: ""
-        headers:
-          - name: Content-Type
-            value: application/json
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
   - name: Bookings
     meta:
-      id: fld_57eabd8e729d4e10bc20f9da107d9b06
-      created: 1759263622622
-      modified: 1759263622622
-      sortKey: -1759263622622
+      id: fld_d74d1090f962421da576b4bd8d664aa1
+      created: 1759502350269
+      modified: 1759502350269
+      sortKey: -1759502350269
       description: ""
     children:
       - url: "{{ _.booking_url }}/"
         name: Bookings - Home
         meta:
-          id: req_6af98893934e4ac695970150e46657d3
-          created: 1759263633038
-          modified: 1759263690476
+          id: req_61070ce86eaa4e1285264895cf52f0f1
+          created: 1759502358051
+          modified: 1759502379200
           isPrivate: false
           description: ""
-          sortKey: -1759263633038
+          sortKey: -1759502358051
         method: GET
         headers:
           - name: User-Agent
@@ -1595,133 +35,27 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: "{{ _.booking_url }}/chris_rivers/bookings"
-        name: Bookings - JSON - Success
+      - url: "{{ _.booking_url }}/graphql"
+        name: Bookings - Get Booking by ID - Success
         meta:
-          id: req_996c342175804d15b9a3ed76e11abc63
-          created: 1759263700715
-          modified: 1759263773408
+          id: req_f8d11b1b112446e9b63ec23b8febff6c
+          created: 1759502656961
+          modified: 1759614083074
           isPrivate: false
           description: ""
-          sortKey: -1759079177076
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.booking_url }}/peter_curley/bookings"
-        name: Bookings - JSON - Failure - Is not admin
-        meta:
-          id: req_30390f143d5045589d51d1d1578531bc
-          created: 1759263780954
-          modified: 1759263790609
-          isPrivate: false
-          description: ""
-          sortKey: -1758986949095
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.booking_url }}/chris_rivers/bookings/garret_heaton"
-        name: Bookings - By user ID- Success
-        meta:
-          id: req_793e912abbde4af0b290b543dc0d5814
-          created: 1759263830002
-          modified: 1759263842017
-          isPrivate: false
-          description: ""
-          sortKey: -1758986948995
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.booking_url }}/peter_curley/bookings/garret_heaton"
-        name: Bookings - By user ID- Failure - Is not admin
-        meta:
-          id: req_0c260e30796d43f6b0fa0191f77beb2b
-          created: 1759263863766
-          modified: 1759263870401
-          isPrivate: false
-          description: ""
-          sortKey: -1758940835054.5
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.booking_url }}/chris_rivers/bookings/garret_heatont"
-        name: Bookings - By user ID- Failure - User not found
-        meta:
-          id: req_accb548c07514a8a90777f5248291bcf
-          created: 1759264020634
-          modified: 1759264030441
-          isPrivate: false
-          description: ""
-          sortKey: -1758917778084.25
-        method: GET
-        headers:
-          - name: User-Agent
-            value: insomnia/11.6.1
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.booking_url }}/chris_rivers/bookings/garret_heaton"
-        name: Bookings - By user ID- Success
-        meta:
-          id: req_65fb3f7fcc3046129ea864706e520c13
-          created: 1759264055134
-          modified: 1759264137900
-          isPrivate: false
-          description: ""
-          sortKey: -1758917777984.25
+          sortKey: -1759502357951
         method: POST
         body:
-          mimeType: application/json
-          text: |-
-            {
-            		"date": "20151204",
-            		"movie_id": "96798c08-d19b-4986-a05d-7da856efb697"
-            }
+          mimeType: application/graphql
+          text: '{"query":"query{\n  booking_with_user_id(id:\"chris_rivers\")
+            {\n    userid
+            {\n\t\t\tid\n\t\t\tname\n\t\t\tlast_active\n\t\t\tis_admin\n\t\t}\n\t\tdates
+            {\n\t\t\tdate\n\t\t\tmovies\n\t\t}\n  }\n}"}'
         headers:
-          - name: Content-Type
-            value: application/json
           - name: User-Agent
             value: insomnia/11.6.1
+          - name: Content-Type
+            value: application/json
         settings:
           renderRequestBody: true
           encodeUrl: true
@@ -1730,28 +64,28 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: "{{ _.booking_url }}/peter_curley/bookings/garret_heaton"
-        name: Bookings - By user ID- Failure - Is not admin
+      - url: "{{ _.booking_url }}/graphql"
+        name: Bookings - Get Booking by ID - Failure  - Booking not found
         meta:
-          id: req_60db143e777145e684b49c9d2dbe7873
-          created: 1759264158356
-          modified: 1759264165586
+          id: req_71b6757c49d94ced8bcd83fa9dd47e7b
+          created: 1759507029533
+          modified: 1759678635899
           isPrivate: false
           description: ""
-          sortKey: -1758906249549.125
+          sortKey: -1759425961843
         method: POST
         body:
-          mimeType: application/json
-          text: |-
-            {
-            		"date": "20151204",
-            		"movie_id": "96798c08-d19b-4986-a05d-7da856efb697"
-            }
+          mimeType: application/graphql
+          text: '{"query":"query{\n  booking_with_user_id(id:\"chris_riverst\")
+            {\n    userid
+            {\n\t\t\tid\n\t\t\tname\n\t\t\tlast_active\n\t\t\tis_admin\n\t\t}\n\t\tdates
+            {\n\t\t\tdate\n\t\t\tmovies
+            {\n\t\t\t\tid\n\t\t\t\ttitle\n\t\t\t}\n\t\t}\n  }\n}"}'
         headers:
-          - name: Content-Type
-            value: application/json
           - name: User-Agent
             value: insomnia/11.6.1
+          - name: Content-Type
+            value: application/json
         settings:
           renderRequestBody: true
           encodeUrl: true
@@ -1760,28 +94,27 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: "{{ _.booking_url }}/chris_rivers/bookings/garret_heaton"
-        name: Bookings - By user ID- Failure - Date not found in schedule
+      - url: "{{ _.booking_url }}/graphql"
+        name: Bookings - Bookings JSON - Success
         meta:
-          id: req_c8812e273c004449bb1c78d31796e936
-          created: 1759264196593
-          modified: 1759264204442
+          id: req_511f9bf393be4f3fa0ae0a25769d0a05
+          created: 1759613958999
+          modified: 1759678631578
           isPrivate: false
           description: ""
-          sortKey: -1758906249449.125
+          sortKey: -1759502358001
         method: POST
         body:
-          mimeType: application/json
-          text: |-
-            {
-            		"date": "2015120",
-            		"movie_id": "96798c08-d19b-4986-a05d-7da856efb697"
-            }
+          mimeType: application/graphql
+          text: '{"query":"query{\n  bookings_json {\n    userid
+            {\n\t\t\tid\n\t\t\tname\n\t\t\tlast_active\n\t\t\tis_admin\n\t\t}\n\t\tdates
+            {\n\t\t\tdate\n\t\t\tmovies
+            {\n\t\t\t\tid\n\t\t\t\ttitle\n\t\t\t}\n\t\t}\n  }\n}"}'
         headers:
-          - name: Content-Type
-            value: application/json
           - name: User-Agent
             value: insomnia/11.6.1
+          - name: Content-Type
+            value: application/json
         settings:
           renderRequestBody: true
           encodeUrl: true
@@ -1790,28 +123,29 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: "{{ _.booking_url }}/chris_rivers/bookings/garret_heaton"
-        name: Bookings - By user ID- Failure - Movie not available at that date
+      - url: "{{ _.booking_url }}/graphql"
+        name: Bookings - Add Booking - Success - Existing user and existing date
         meta:
-          id: req_9945746ae6d0461aa1c2e59e4c536a94
-          created: 1759264229888
-          modified: 1759264291713
+          id: req_f03cb9ff697b4ea4a4a7f7cfffff61f3
+          created: 1759614937115
+          modified: 1759679265473
           isPrivate: false
           description: ""
-          sortKey: -1758900485281.5625
+          sortKey: -1759425961743
         method: POST
         body:
-          mimeType: application/json
-          text: |-
-            {
-            		"date": "20151205",
-            		"movie_id": "96798c08-d19b-4986-a05d-7da856efb69"
-            }
+          mimeType: application/graphql
+          text: '{"query":"mutation{\n  add_booking(userid:\"chris_rivers\", date:
+            \"20151201\", movieid: \"720d006c-3a57-4b6a-b18f-9b713b073f3c\")
+            {\n    userid
+            {\n\t\t\tid\n\t\t\tname\n\t\t\tlast_active\n\t\t\tis_admin\n\t\t}\n\t\tdates
+            {\n\t\t\tdate\n\t\t\tmovies
+            {\n\t\t\t\tid\n\t\t\t\ttitle\n\t\t\t}\n\t\t}\n  }\n}"}'
         headers:
-          - name: Content-Type
-            value: application/json
           - name: User-Agent
             value: insomnia/11.6.1
+          - name: Content-Type
+            value: application/json
         settings:
           renderRequestBody: true
           encodeUrl: true
@@ -1820,26 +154,29 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: "{{ _.booking_url
-          }}/chris_rivers/bookings/garret_heaton/20151201/267eedb8-0f5d-42d5-8f\
-          43-72426b9fb3e6"
-        name: Bookings - by user ID, date and movie ID - Success
+      - url: "{{ _.booking_url }}/graphql"
+        name: Bookings - Add Booking - Success - Existing user and new date
         meta:
-          id: req_7eb9c536fb3d48edaccfc65483172a8d
-          created: 1759264349978
-          modified: 1759264598468
+          id: req_e506f3d387114cb1a98a0a38731f0a5b
+          created: 1759672218564
+          modified: 1759679271831
           isPrivate: false
           description: ""
-          sortKey: -1758897603197.7812
-        method: DELETE
+          sortKey: -1759387763739
+        method: POST
         body:
-          mimeType: application/json
-          text: ""
+          mimeType: application/graphql
+          text: '{"query":"mutation{\n  add_booking(userid:\"chris_rivers\", date:
+            \"20151204\", movieid: \"720d006c-3a57-4b6a-b18f-9b713b073f3c\")
+            {\n    userid
+            {\n\t\t\tid\n\t\t\tname\n\t\t\tlast_active\n\t\t\tis_admin\n\t\t}\n\t\tdates
+            {\n\t\t\tdate\n\t\t\tmovies
+            {\n\t\t\t\tid\n\t\t\t\ttitle\n\t\t\t}\n\t\t}\n  }\n}"}'
         headers:
-          - name: Content-Type
-            value: application/json
           - name: User-Agent
             value: insomnia/11.6.1
+          - name: Content-Type
+            value: application/json
         settings:
           renderRequestBody: true
           encodeUrl: true
@@ -1848,26 +185,29 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: "{{ _.booking_url
-          }}/peter_curley/bookings/garret_heaton/20151201/267eedb8-0f5d-42d5-8f\
-          43-72426b9fb3e"
-        name: Bookings - by user ID, date and movie ID - Failure - Is not admin
+      - url: "{{ _.booking_url }}/graphql"
+        name: Bookings - Add Booking - Success - New user
         meta:
-          id: req_7ea92dfd7f4e4880a905d187f7d54619
-          created: 1759264613065
-          modified: 1759264732021
+          id: req_e9b403a2a4fc48da87049a81cf6c2ce7
+          created: 1759672327414
+          modified: 1759679378112
           isPrivate: false
           description: ""
-          sortKey: -1758897242937.3086
-        method: DELETE
+          sortKey: -1759368664737
+        method: POST
         body:
-          mimeType: application/json
-          text: ""
+          mimeType: application/graphql
+          text: '{"query":"mutation{\n  add_booking(userid:\"michael_scott\", date:
+            \"20151204\", movieid: \"720d006c-3a57-4b6a-b18f-9b713b073f3c\")
+            {\n    userid
+            {\n\t\t\tid\n\t\t\tname\n\t\t\tlast_active\n\t\t\tis_admin\n\t\t}\n\t\tdates
+            {\n\t\t\tdate\n\t\t\tmovies
+            {\n\t\t\t\tid\n\t\t\t\ttitle\n\t\t\t}\n\t\t}\n  }\n}"}'
         headers:
-          - name: Content-Type
-            value: application/json
           - name: User-Agent
             value: insomnia/11.6.1
+          - name: Content-Type
+            value: application/json
         settings:
           renderRequestBody: true
           encodeUrl: true
@@ -1876,27 +216,29 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: "{{ _.booking_url
-          }}/chris_rivers/bookings/garret_heaton/20151201/267eedb8-0f5d-42d5-8f\
-          43-72426b9fb3e6"
-        name: Bookings - by user ID, date and movie ID - Failure - Movie not found in
-          this booking
+      - url: "{{ _.booking_url }}/graphql"
+        name: Bookings - Add Booking - Failure - Booking already exists
         meta:
-          id: req_fc1fa37cce824784800eb539aecd0a78
-          created: 1759264651803
-          modified: 1759264651803
+          id: req_5ae4af57d08243a58be0f13dbfb9edcd
+          created: 1759672633187
+          modified: 1759679384714
           isPrivate: false
           description: ""
-          sortKey: -1758896882676.836
-        method: DELETE
+          sortKey: -1759359115236
+        method: POST
         body:
-          mimeType: application/json
-          text: ""
+          mimeType: application/graphql
+          text: '{"query":"mutation{\n  add_booking(userid:\"chris_rivers\", date:
+            \"20151201\", movieid: \"267eedb8-0f5d-42d5-8f43-72426b9fb3e6\")
+            {\n    userid
+            {\n\t\t\tid\n\t\t\tname\n\t\t\tlast_active\n\t\t\tis_admin\n\t\t}\n\t\tdates
+            {\n\t\t\tdate\n\t\t\tmovies
+            {\n\t\t\t\tid\n\t\t\t\ttitle\n\t\t\t}\n\t\t}\n  }\n}"}'
         headers:
-          - name: Content-Type
-            value: application/json
           - name: User-Agent
             value: insomnia/11.6.1
+          - name: Content-Type
+            value: application/json
         settings:
           renderRequestBody: true
           encodeUrl: true
@@ -1905,26 +247,29 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: "{{ _.booking_url
-          }}/chris_rivers/bookings/garret_heatont/20151201/267eedb8-0f5d-42d5-8\
-          f43-72426b9fb3e6"
-        name: Bookings - by user ID, date and movie ID - Failure - Booking not found
+      - url: "{{ _.booking_url }}/graphql"
+        name: Bookings - Add Booking - Failure - User not found
         meta:
-          id: req_830090868db940f798cf4f3e22dda1ee
-          created: 1759264747964
-          modified: 1759264753873
+          id: req_0e561db9fafe405aae529d8da3e57813
+          created: 1759672719646
+          modified: 1759679433188
           isPrivate: false
           description: ""
-          sortKey: -1758895801895.418
-        method: DELETE
+          sortKey: -1759354340485.5
+        method: POST
         body:
-          mimeType: application/json
-          text: ""
+          mimeType: application/graphql
+          text: '{"query":"mutation{\n  add_booking(userid:\"test_userid\", date:
+            \"20151201\", movieid: \"267eedb8-0f5d-42d5-8f43-72426b9fb3e6\")
+            {\n    userid
+            {\n\t\t\tid\n\t\t\tname\n\t\t\tlast_active\n\t\t\tis_admin\n\t\t}\n\t\tdates
+            {\n\t\t\tdate\n\t\t\tmovies
+            {\n\t\t\t\tid\n\t\t\t\ttitle\n\t\t\t}\n\t\t}\n  }\n}"}'
         headers:
-          - name: Content-Type
-            value: application/json
           - name: User-Agent
             value: insomnia/11.6.1
+          - name: Content-Type
+            value: application/json
         settings:
           renderRequestBody: true
           encodeUrl: true
@@ -1933,24 +278,29 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: "{{ _.booking_url }}/chris_rivers/bookings/dwight_schrute"
-        name: Bookings - by user ID - Success
+      - url: "{{ _.booking_url }}/graphql"
+        name: Bookings - Remove Booking - Success
         meta:
-          id: req_abdd0de5c4aa4a9dab077638844796a2
-          created: 1759264779906
-          modified: 1759264835345
+          id: req_c6ce6b1f78034f97a209985e69639643
+          created: 1759673283710
+          modified: 1759679396402
           isPrivate: false
           description: ""
-          sortKey: -1758895261504.709
-        method: DELETE
+          sortKey: -1759351953110.25
+        method: POST
         body:
-          mimeType: application/json
-          text: ""
+          mimeType: application/graphql
+          text: '{"query":"mutation{\n  remove_booking_with_movie_date_user(userid:\"dwight_schrute\",
+            date: \"20151201\", movieid:
+            \"7daf7208-be4d-4944-a3ae-c1c2f516f3e6\") {\n    userid
+            {\n\t\t\tid\n\t\t\tname\n\t\t\tlast_active\n\t\t\tis_admin\n\t\t}\n\t\tdates
+            {\n\t\t\tdate\n\t\t\tmovies
+            {\n\t\t\t\tid\n\t\t\t\ttitle\n\t\t\t}\n\t\t}\n  }\n}"}'
         headers:
-          - name: Content-Type
-            value: application/json
           - name: User-Agent
             value: insomnia/11.6.1
+          - name: Content-Type
+            value: application/json
         settings:
           renderRequestBody: true
           encodeUrl: true
@@ -1959,24 +309,29 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: "{{ _.booking_url }}/peter_curley/bookings/dwight_schrute"
-        name: Bookings - by user ID - Failure - Is not admin
+      - url: "{{ _.booking_url }}/graphql"
+        name: Bookings - Remove Booking - Failure - Movie not found in this booking
         meta:
-          id: req_a0ee2fa69a9b411988c818df719b6895
-          created: 1759264845847
-          modified: 1759264863077
+          id: req_f3fff29eae3a4173bb50079facee7f4e
+          created: 1759673424687
+          modified: 1759679398722
           isPrivate: false
           description: ""
-          sortKey: -1758894991309.3545
-        method: DELETE
+          sortKey: -1759350759422.625
+        method: POST
         body:
-          mimeType: application/json
-          text: ""
+          mimeType: application/graphql
+          text: '{"query":"mutation{\n  remove_booking_with_movie_date_user(userid:\"dwight_schrute\",
+            date: \"20151201\", movieid:
+            \"7daf7208-be4d-4944-a3ae-c1c2f516f3e6\") {\n    userid
+            {\n\t\t\tid\n\t\t\tname\n\t\t\tlast_active\n\t\t\tis_admin\n\t\t}\n\t\tdates
+            {\n\t\t\tdate\n\t\t\tmovies
+            {\n\t\t\t\tid\n\t\t\t\ttitle\n\t\t\t}\n\t\t}\n  }\n}"}'
         headers:
-          - name: Content-Type
-            value: application/json
           - name: User-Agent
             value: insomnia/11.6.1
+          - name: Content-Type
+            value: application/json
         settings:
           renderRequestBody: true
           encodeUrl: true
@@ -1985,24 +340,29 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: "{{ _.booking_url }}/chris_rivers/bookings/dwight_schrutet"
-        name: Bookings - by user ID - Failure - User not found
+      - url: "{{ _.booking_url }}/graphql"
+        name: Bookings - Remove Booking - Failure - Booking not found
         meta:
-          id: req_bcc3548e317f4fd1a94a4cfedd28ce15
-          created: 1759264884691
-          modified: 1759264894981
+          id: req_be60df7b277d4e5abede675a2429fc60
+          created: 1759673445024
+          modified: 1759679405244
           isPrivate: false
           description: ""
-          sortKey: -1758894856211.6772
-        method: DELETE
+          sortKey: -1759350162578.8125
+        method: POST
         body:
-          mimeType: application/json
-          text: ""
+          mimeType: application/graphql
+          text: '{"query":"mutation{\n  remove_booking_with_movie_date_user(userid:\"dwight_schrute\",
+            date: \"20151204\", movieid:
+            \"267eedb8-0f5d-42d5-8f43-72426b9fb3e6\") {\n    userid
+            {\n\t\t\tid\n\t\t\tname\n\t\t\tlast_active\n\t\t\tis_admin\n\t\t}\n\t\tdates
+            {\n\t\t\tdate\n\t\t\tmovies
+            {\n\t\t\t\tid\n\t\t\t\ttitle\n\t\t\t}\n\t\t}\n  }\n}"}'
         headers:
-          - name: Content-Type
-            value: application/json
           - name: User-Agent
             value: insomnia/11.6.1
+          - name: Content-Type
+            value: application/json
         settings:
           renderRequestBody: true
           encodeUrl: true
@@ -2011,22 +371,77 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: "{{ _.booking_url }}/chris_rivers/bookings/chris_rivers/details"
-        name: Bookings - by user ID with details - Success
+      - url: "{{ _.booking_url }}/graphql"
+        name: Bookings - Remove all Bookings with userid - Success
         meta:
-          id: req_7ae22fa5a15c413d835fe23c0c81acf0
-          created: 1759264946355
-          modified: 1759264976977
+          id: req_3571ccbcce164cffa271a95d6a7d7571
+          created: 1759674734464
+          modified: 1759674802298
           isPrivate: false
           description: ""
-          sortKey: -1758894856111.6772
+          sortKey: -1759349864156.9062
+        method: POST
+        body:
+          mimeType: application/graphql
+          text: '{"query":"mutation{\n  remove_bookings_with_user_id(userid:\"dwight_schrute\")\n}"}'
+        headers:
+          - name: User-Agent
+            value: insomnia/11.6.1
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.booking_url }}/graphql"
+        name: Bookings - Remove all Bookings with userid - Failure - User not found
+        meta:
+          id: req_244b655c963a425fbe467001e09b916a
+          created: 1759674843276
+          modified: 1759674849654
+          isPrivate: false
+          description: ""
+          sortKey: -1759349714945.9531
+        method: POST
+        body:
+          mimeType: application/graphql
+          text: '{"query":"mutation{\n  remove_bookings_with_user_id(userid:\"test_userid\")\n}"}'
+        headers:
+          - name: User-Agent
+            value: insomnia/11.6.1
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Movies
+    meta:
+      id: fld_225fc7c927c44ebd98a54372ac34b102
+      created: 1759675331055
+      modified: 1759675331055
+      sortKey: -1759675331055
+      description: ""
+    children:
+      - url: "{{ _.movie_url }}/"
+        name: Movies - Home
+        meta:
+          id: req_0efefa00d4024dbb8ccfbb2514d1914a
+          created: 1759675452629
+          modified: 1759675487311
+          isPrivate: false
+          description: ""
+          sortKey: -1759675452629
         method: GET
-        body:
-          mimeType: application/json
-          text: ""
         headers:
-          - name: Content-Type
-            value: application/json
           - name: User-Agent
             value: insomnia/11.6.1
         settings:
@@ -2037,24 +452,25 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: "{{ _.booking_url }}/peter_curley/bookings/chris_rivers/details"
-        name: Bookings - by user ID with details - Failure - Is not admin
+      - url: "{{ _.movie_url }}/graphql"
+        name: Movies - JSON - Success
         meta:
-          id: req_ccb7d25cb30c48f98347b5ed5be61aea
-          created: 1759265012551
-          modified: 1759265020156
+          id: req_14faa360990f4a0694ee9a777c565c60
+          created: 1759675494965
+          modified: 1759675594194
           isPrivate: false
           description: ""
-          sortKey: -1758894788612.8386
-        method: GET
+          sortKey: -1759675452529
+        method: POST
         body:
-          mimeType: application/json
-          text: ""
+          mimeType: application/graphql
+          text: '{"query":"query {\n\tmovies_json
+            {\n\t\tid\n\t\ttitle\n\t\tdirector\n\t\trating\n\t}\n}"}'
         headers:
-          - name: Content-Type
-            value: application/json
           - name: User-Agent
             value: insomnia/11.6.1
+          - name: Content-Type
+            value: application/json
         settings:
           renderRequestBody: true
           encodeUrl: true
@@ -2063,24 +479,277 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: "{{ _.booking_url }}/chris_rivers/bookings/chris_riverst/details"
-        name: Bookings - by user ID with details - Failure - User not found
+      - url: "{{ _.movie_url }}/graphql"
+        name: Movies - Movie by ID - Success
         meta:
-          id: req_cdfe6952e72a457bb6397f54f72a6429
-          created: 1759265053781
-          modified: 1759265063999
+          id: req_b6505c3bedc64ee69ea5145e82973c89
+          created: 1759675587804
+          modified: 1759677934547
           isPrivate: false
           description: ""
-          sortKey: -1758894754863.4194
-        method: GET
+          sortKey: -1759588905290
+        method: POST
         body:
-          mimeType: application/json
-          text: ""
+          mimeType: application/graphql
+          text: '{"query":"query {\n\tmovie_with_id (id:
+            \"720d006c-3a57-4b6a-b18f-9b713b073f3c\")
+            {\n\t\tid\n\t\ttitle\n\t\tdirector\n\t\trating\n\t}\n}"}'
         headers:
-          - name: Content-Type
-            value: application/json
           - name: User-Agent
             value: insomnia/11.6.1
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.movie_url }}/graphql"
+        name: Movies - Movie by ID - Failure - Movie not found
+        meta:
+          id: req_574d6e0a19294dcf8ed575d0cd4edfad
+          created: 1759675655745
+          modified: 1759675659787
+          isPrivate: false
+          description: ""
+          sortKey: -1759545631670.5
+        method: POST
+        body:
+          mimeType: application/graphql
+          text: '{"query":"query {\n\tmovie_with_id (id:
+            \"720d006c-3a57-4b6a-b18f-9b713b073f3ct\")
+            {\n\t\tid\n\t\ttitle\n\t\tdirector\n\t\trating\n\t}\n}"}'
+        headers:
+          - name: User-Agent
+            value: insomnia/11.6.1
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.movie_url }}/graphql"
+        name: Movies - Movie by title - Success
+        meta:
+          id: req_fa44c76731e443edbd6d09fa97b72bb5
+          created: 1759675685082
+          modified: 1759675783187
+          isPrivate: false
+          description: ""
+          sortKey: -1759523994860.75
+        method: POST
+        body:
+          mimeType: application/graphql
+          text: '{"query":"query {\n\tmovie_with_title (title: \"The Martian\")
+            {\n\t\tid\n\t\ttitle\n\t\tdirector\n\t\trating\n\t}\n}"}'
+        headers:
+          - name: User-Agent
+            value: insomnia/11.6.1
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.movie_url }}/graphql"
+        name: Movies - Movie by title - Failure - Movie not found
+        meta:
+          id: req_0f5a0197adce491c8391ee0c88a9386d
+          created: 1759675791277
+          modified: 1759675799565
+          isPrivate: false
+          description: ""
+          sortKey: -1759513176455.875
+        method: POST
+        body:
+          mimeType: application/graphql
+          text: '{"query":"query {\n\tmovie_with_title (title: \"Test movie title\")
+            {\n\t\tid\n\t\ttitle\n\t\tdirector\n\t\trating\n\t}\n}"}'
+        headers:
+          - name: User-Agent
+            value: insomnia/11.6.1
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.movie_url }}/graphql"
+        name: Movies - Add movie - Success
+        meta:
+          id: req_6c96e6509f254e55a494d9adfe484cf6
+          created: 1759675833797
+          modified: 1759675882770
+          isPrivate: false
+          description: ""
+          sortKey: -1759507767253.4375
+        method: POST
+        body:
+          mimeType: application/graphql
+          text: '{"query":"mutation {\n\tadd_movie (id: \"test_movie_id\", title: \"Test
+            movie title\", rating: 4.2, director: \"Test movie director\")
+            {\n\t\tid\n\t\ttitle\n\t\tdirector\n\t\trating\n\t}\n}"}'
+        headers:
+          - name: User-Agent
+            value: insomnia/11.6.1
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.movie_url }}/graphql"
+        name: Movies - Add movie - Failure - Movie ID already exists
+        meta:
+          id: req_cf667ceb1af5455bbdc92eb43c29d20e
+          created: 1759676012543
+          modified: 1759676027706
+          isPrivate: false
+          description: ""
+          sortKey: -1759505062652.2188
+        method: POST
+        body:
+          mimeType: application/graphql
+          text: '{"query":"mutation {\n\tadd_movie (id:
+            \"720d006c-3a57-4b6a-b18f-9b713b073f3c\", title: \"Test movie
+            title\", rating: 4.2, director: \"Test movie director\")
+            {\n\t\tid\n\t\ttitle\n\t\tdirector\n\t\trating\n\t}\n}"}'
+        headers:
+          - name: User-Agent
+            value: insomnia/11.6.1
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.movie_url }}/graphql"
+        name: Movies - Update movie - Success
+        meta:
+          id: req_345fc2e3ff5b4a7ebf3db1086a1c0fb3
+          created: 1759676051299
+          modified: 1759676089353
+          isPrivate: false
+          description: ""
+          sortKey: -1759503710351.6094
+        method: POST
+        body:
+          mimeType: application/graphql
+          text: '{"query":"mutation {\n\tupdate_movie_rate (id:
+            \"720d006c-3a57-4b6a-b18f-9b713b073f3c\", rating: 4.0)
+            {\n\t\tid\n\t\ttitle\n\t\tdirector\n\t\trating\n\t}\n}"}'
+        headers:
+          - name: User-Agent
+            value: insomnia/11.6.1
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.movie_url }}/graphql"
+        name: Movies - Update movie - Failure - Movie not found
+        meta:
+          id: req_658857528d764374bb0512ad227ca185
+          created: 1759676123503
+          modified: 1759676129861
+          isPrivate: false
+          description: ""
+          sortKey: -1759503034201.3047
+        method: POST
+        body:
+          mimeType: application/graphql
+          text: '{"query":"mutation {\n\tupdate_movie_rate (id:
+            \"720d006c-3a57-4b6a-b18f-9b713b073f3ct\", rating: 4.0)
+            {\n\t\tid\n\t\ttitle\n\t\tdirector\n\t\trating\n\t}\n}"}'
+        headers:
+          - name: User-Agent
+            value: insomnia/11.6.1
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.movie_url }}/graphql"
+        name: Movies - Remove movie - Success
+        meta:
+          id: req_f90b360bfea747d88b18ef4d469acc86
+          created: 1759676148784
+          modified: 1759676183107
+          isPrivate: false
+          description: ""
+          sortKey: -1759502696126.1523
+        method: POST
+        body:
+          mimeType: application/graphql
+          text: '{"query":"mutation {\n\tremove_movie_with_id (id:
+            \"720d006c-3a57-4b6a-b18f-9b713b073f3c\")
+            {\n\t\tid\n\t\ttitle\n\t\tdirector\n\t\trating\n\t}\n}"}'
+        headers:
+          - name: User-Agent
+            value: insomnia/11.6.1
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.movie_url }}/graphql"
+        name: Movies - Remove movie - Failure - Movie not found
+        meta:
+          id: req_f6ac91b1b2214617a5d6fa90d12fbace
+          created: 1759676258278
+          modified: 1759676481582
+          isPrivate: false
+          description: ""
+          sortKey: -1759502527088.5762
+        method: POST
+        body:
+          mimeType: application/graphql
+          text: '{"query":"mutation {\n\tremove_movie_with_id (id:
+            \"720d006c-3a57-4b6a-b18f-9b713b073f3ct\")
+            {\n\t\tid\n\t\ttitle\n\t\tdirector\n\t\trating\n\t}\n}"}'
+        headers:
+          - name: User-Agent
+            value: insomnia/11.6.1
+          - name: Content-Type
+            value: application/json
         settings:
           renderRequestBody: true
           encodeUrl: true
@@ -2092,15 +761,15 @@ collection:
 cookieJar:
   name: Default Jar
   meta:
-    id: jar_308d3b1d840f4dff947c544f0b5cd1ea
+    id: jar_f810c725820cf03894f85efdd73fdf6fda34a224
     created: 1758402662078
     modified: 1758402662078
 environments:
   name: Base Environment
   meta:
-    id: env_f091f3cbc7dc45ff9b4f3b4425078cbf
+    id: env_f810c725820cf03894f85efdd73fdf6fda34a224
     created: 1758402662076
-    modified: 1759260301110
+    modified: 1759349054683
     isPrivate: false
   data:
     movie_url: http://127.0.0.1:3200
