@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: Booking GraphQL Microservice
   version: 1.0.0
-  description: API GraphQL pour la gestion des réservations (lecture, ajout, suppression) avec références aux microservices Movie et User.
+  description: API GraphQL pour la gestion des réservations avec dates et films.
 
 servers:
   - url: http://localhost:3203
@@ -11,7 +11,7 @@ servers:
 paths:
   /graphql:
     post:
-      summary: Exécuter une requête GraphQL sur les réservations
+      summary: Exécuter une requête GraphQL sur les bookings
       requestBody:
         required: true
         content:
@@ -19,12 +19,12 @@ paths:
             examples:
               queryAll:
                 $ref: '#/components/examples/queryAll'
-              queryByUser:
-                $ref: '#/components/examples/queryByUser'
+              queryById:
+                $ref: '#/components/examples/queryById'
               mutationAdd:
                 $ref: '#/components/examples/mutationAdd'
-              mutationRemoveMovie:
-                $ref: '#/components/examples/mutationRemoveMovie'
+              mutationRemoveMovieDate:
+                $ref: '#/components/examples/mutationRemoveMovieDate'
               mutationRemoveUser:
                 $ref: '#/components/examples/mutationRemoveUser'
       responses:
@@ -34,136 +34,75 @@ paths:
             application/json:
               examples:
                 queryAllResponse:
-                  summary: Exemple de réponse contenant toutes les réservations
+                  summary: Réponse de toutes les réservations
                   value:
                     data:
                       bookings_json:
                         - userid:
-                            id: "user-001"
+                            id: "alice"
                             name: "Alice"
-                            last_active: 1697301123
+                            email: "alice@example.com"
                             is_admin: false
+                            last_active: "1699999999"
                           dates:
-                            - date: "2025-10-21"
+                            - date: "20251020"
                               movies:
-                                - id: "m1"
-                                  title: "Inception"
-                                  director: "Christopher Nolan"
-                                  rating: 8.8
-                                - id: "m2"
-                                  title: "Matrix"
-                                  director: "Wachowski"
-                                  rating: 8.7
-                        - userid:
-                            id: "user-002"
-                            name: "Bob"
-                            last_active: 1697250000
-                            is_admin: true
-                          dates:
-                            - date: "2025-10-22"
-                              movies:
-                                - id: "m3"
-                                  title: "The Martian"
-                                  director: "Ridley Scott"
-                                  rating: 8.0
-                queryByUserResponse:
-                  summary: Réponse d’une réservation pour un utilisateur donné
+                                - id: "mv-001"
+                                  title: "Movie One"
+                                  director: "Director A"
+                                  rating: 8.5
+                queryByIdResponse:
+                  summary: Réponse d’une réservation par ID
                   value:
                     data:
-                      booking_with_user_id:
+                      booking_with_id:
                         userid:
-                          id: "user-001"
+                          id: "alice"
                           name: "Alice"
-                          last_active: 1697301123
+                          email: "alice@example.com"
                           is_admin: false
+                          last_active: "1699999999"
                         dates:
-                          - date: "2025-10-21"
+                          - date: "20251020"
                             movies:
-                              - id: "m1"
-                                title: "Inception"
-                                director: "Christopher Nolan"
-                                rating: 8.8
+                              - id: "mv-001"
+                                title: "Movie One"
+                                director: "Director A"
+                                rating: 8.5
 
 components:
-  schemas:
-    User:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        last_active:
-          type: integer
-        is_admin:
-          type: boolean
-
-    Movie:
-      type: object
-      properties:
-        id:
-          type: string
-        title:
-          type: string
-        director:
-          type: string
-        rating:
-          type: number
-          format: float
-
-    Date:
-      type: object
-      properties:
-        date:
-          type: string
-        movies:
-          type: array
-          items:
-            $ref: '#/components/schemas/Movie'
-
-    Booking:
-      type: object
-      properties:
-        userid:
-          $ref: '#/components/schemas/User'
-        dates:
-          type: array
-          items:
-            $ref: '#/components/schemas/Date'
-
   examples:
     queryAll:
       summary: Obtenir toutes les réservations
       value: |
         {
-          "query": "query { bookings_json { userid { id name last_active is_admin } dates { date movies { id title director rating } } } }"
+          "query": "query { bookings_json(user_id: \"chris_rivers\") { userid { id name email is_admin last_active } dates { date movies { id title director rating } } } }"
         }
 
-    queryByUser:
-      summary: Obtenir une réservation par identifiant utilisateur
+    queryById:
+      summary: Obtenir une réservation par ID
       value: |
         {
-          "query": "query { booking_with_user_id(id: \"chris_rivers\") { userid { id name last_active is_admin } dates { date movies { id title director rating } } } }"
+          "query": "query { booking_with_id(user_id: \"chris_rivers\", id: \"alice\") { userid { id name email is_admin last_active } dates { date movies { id title director rating } } } }"
         }
 
     mutationAdd:
-      summary: Ajouter une réservation
+      summary: Ajouter une réservation (admin required)
       value: |
         {
-          "query": "mutation { add_booking(userid: \"chris_rivers\", date: \"20151201\", movieid: \"a8034f44-aee4-44cf-b32c-74cf452aaaaz\") { userid { id name } dates { date movies { id title } } } }"
+          "query": "mutation { add_booking(user_id: \"chris_rivers\", userid: \"bob\", date: \"20251021\", movieid: \"mv-002\") { userid { id name email is_admin last_active } dates { date movies { id title director rating } } } }"
         }
 
-    mutationRemoveMovie:
-      summary: Supprimer un film d’une réservation donnée
+    mutationRemoveMovieDate:
+      summary: Supprimer un film à une date spécifique pour un utilisateur (admin required)
       value: |
         {
-          "query": "mutation { remove_booking_with_movie_date_user(userid: \"dwight_schrute\", date: \"20151201\", movieid: \"7daf7208-be4d-4944-a3ae-c1c2f516f3e6\") { userid { id name } dates { date movies { id title } } } }"
+          "query": "mutation { remove_booking_with_movie_date_user(user_id: \"chris_rivers\", userid: \"bob\", date: \"20251021\", movieid: \"mv-002\") { userid { id name email is_admin last_active } dates { date movies { id title director rating } } } }"
         }
-
 
     mutationRemoveUser:
-      summary: Supprimer toutes les réservations d’un utilisateur
+      summary: Supprimer toutes les réservations d’un utilisateur (admin required)
       value: |
         {
-          "query": "mutation { remove_bookings_with_user_id(userid: \"chris_rivers\") }"
+          "query": "mutation { remove_bookings_with_user_id(user_id: \"chris_rivers\", userid: \"bob\") }"
         }

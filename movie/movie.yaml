@@ -78,40 +78,40 @@ components:
       summary: Obtenir tous les films
       value: |
         {
-          "query": "query { movies_json { id title rating director } }"
+          "query": "query { movies_json(user_id: \"chris_rivers\") { id title rating director } }"
         }
 
     queryById:
       summary: Obtenir un film par ID
       value: |
         {
-          "query": "query { movie_with_id(id: \"720d006c-3a57-4b6a-b18f-9b713b073f3c\") { id title director rating } }"
+          "query": "query { movie_with_id(user_id: \"chris_rivers\", id: \"720d006c-3a57-4b6a-b18f-9b713b073f3c\") { id title director rating } }"
         }
 
     queryByTitle:
       summary: Obtenir un film par titre
       value: |
         {
-          "query": "query { movie_with_title(title: \"The Martian\") { id title director rating } }"
+          "query": "query { movie_with_title(user_id: \"chris_rivers\", title: \"The Martian\") { id title director rating } }"
         }
 
     mutationAdd:
       summary: Ajouter un film
       value: |
         {
-          "query": "mutation { add_movie(id: \"a8034f44-aee4-44cf-b32c-74cf452aaaaz\", title: \"Matrix\", rating: 8.7, director: \"Wachowski\") { id title rating director } }"
+          "query": "mutation { add_movie(user_id: \"chris_rivers\", id: \"a8034f44-aee4-44cf-b32c-74cf452aaaaz\", title: \"Matrix\", rating: 8.7, director: \"Wachowski\") { id title rating director } }"
         }
 
     mutationUpdate:
       summary: Modifier la note d’un film
       value: |
         {
-          "query": "mutation { update_movie_rate(id: \"720d006c-3a57-4b6a-b18f-9b713b073f3c\", rating: 9.0) { id title rating } }"
+          "query": "mutation { update_movie_rate(user_id: \"chris_rivers\", id: \"720d006c-3a57-4b6a-b18f-9b713b073f3c\", rating: 9.0) { id title rating } }"
         }
 
     mutationRemove:
       summary: Supprimer un film
       value: |
         {
-          "query": "mutation { remove_movie_with_id(id: \"720d006c-3a57-4b6a-b18f-9b713b073f3c\") { id title } }"
+          "query": "mutation { remove_movie_with_id(user_id: \"chris_rivers\", id: \"720d006c-3a57-4b6a-b18f-9b713b073f3c\") { id title } }"
         }

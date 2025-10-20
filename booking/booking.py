@@ -24,7 +24,7 @@ date = ObjectType('Date')
 movie = ObjectType('Movie')
 
 query.set_field('bookings_json', r.bookings_json)
-query.set_field('booking_with_user_id', r.booking_with_user_id)
+query.set_field('booking_with_id', r.booking_with_id)
 mutation.set_field('add_booking', r.add_booking)
 mutation.set_field('remove_booking_with_movie_date_user', r.remove_booking_with_movie_date_user)
 mutation.set_field('remove_bookings_with_user_id', r.remove_bookings_with_user_id)
