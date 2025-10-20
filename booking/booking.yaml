@@ -1,238 +1,169 @@
 openapi: 3.0.3
 info:
-  title: Booking Service API
-  description: API to manage movie bookings, with admin checks via User service and details from Schedule and Movie services.
+  title: Booking GraphQL Microservice
   version: 1.0.0
+  description: API GraphQL pour la gestion des réservations (lecture, ajout, suppression) avec références aux microservices Movie et User.
+
 servers:
   - url: http://localhost:3203
+    description: Service GraphQL Booking
+
 paths:
-  /{user_id}/bookings:
-    get:
-      summary: Retrieve all bookings
-      description: Returns all bookings. Admin required.
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: List of all bookings
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Booking'
-        '403':
-          description: Unauthorized - admin access required
-        '401':
-          description: Unable to verify user
-        '503':
-          description: User service unreachable
-
-  /{user_id}/bookings/{user_id_wanted}:
-    get:
-      summary: Retrieve bookings for a specific user
-      description: Returns all bookings of a user. Admin or self access required.
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: user_id_wanted
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: User bookings
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Booking'
-        '403':
-          description: Unauthorized - admin access required
-        '404':
-          description: User not found
-
+  /graphql:
     post:
-      summary: Add a booking for a user
-      description: Adds a booking. Admin or self access required. Checks movie availability in Schedule.
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: user_id_wanted
-          in: path
-          required: true
-          schema:
-            type: string
+      summary: Exécuter une requête GraphQL sur les réservations
       requestBody:
         required: true
         content:
           application/json:
-            schema:
-              type: object
-              properties:
-                date:
-                  type: string
-                  format: date
-                movie_id:
-                  type: string
-              required:
-                - date
-                - movie_id
+            examples:
+              queryAll:
+                $ref: '#/components/examples/queryAll'
+              queryByUser:
+                $ref: '#/components/examples/queryByUser'
+              mutationAdd:
+                $ref: '#/components/examples/mutationAdd'
+              mutationRemoveMovie:
+                $ref: '#/components/examples/mutationRemoveMovie'
+              mutationRemoveUser:
+                $ref: '#/components/examples/mutationRemoveUser'
       responses:
-        '200':
-          description: Booking added
-        '400':
-          description: Invalid data or booking already exists
-        '403':
-          description: Unauthorized - admin access required
-        '404':
-          description: Date not found in schedule / Movie not available
-
-    delete:
-      summary: Delete all bookings of a user
-      description: Deletes all bookings for a user. Admin or self access required.
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: user_id_wanted
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: All bookings deleted for the user
-        '403':
-          description: Unauthorized - admin access required
-        '404':
-          description: User not found
-
-  /{user_id}/bookings/{user_id_wanted}/{date}/{movie_id}:
-    delete:
-      summary: Delete a specific booking
-      description: Deletes a specific movie booking for a user on a given date. Admin or self access required.
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: user_id_wanted
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: date
-          in: path
-          required: true
-          schema:
-            type: string
-            format: date
-        - name: movie_id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Booking deleted
-        '403':
-          description: Unauthorized - admin access required
-        '404':
-          description: Booking or movie not found
-
-  /{user_id}/bookings/{user_id_wanted}/details:
-    get:
-      summary: Retrieve user bookings with movie details
-      description: Returns bookings of a user with detailed information from Movie service. Admin or self access required.
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: user_id_wanted
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: User bookings with movie details
+        "200":
+          description: Réponse GraphQL réussie
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/BookingDetails'
-        '403':
-          description: Unauthorized - admin access required
-        '404':
-          description: User not found
+              examples:
+                queryAllResponse:
+                  summary: Exemple de réponse contenant toutes les réservations
+                  value:
+                    data:
+                      bookings_json:
+                        - userid:
+                            id: "user-001"
+                            name: "Alice"
+                            last_active: 1697301123
+                            is_admin: false
+                          dates:
+                            - date: "2025-10-21"
+                              movies:
+                                - id: "m1"
+                                  title: "Inception"
+                                  director: "Christopher Nolan"
+                                  rating: 8.8
+                                - id: "m2"
+                                  title: "Matrix"
+                                  director: "Wachowski"
+                                  rating: 8.7
+                        - userid:
+                            id: "user-002"
+                            name: "Bob"
+                            last_active: 1697250000
+                            is_admin: true
+                          dates:
+                            - date: "2025-10-22"
+                              movies:
+                                - id: "m3"
+                                  title: "The Martian"
+                                  director: "Ridley Scott"
+                                  rating: 8.0
+                queryByUserResponse:
+                  summary: Réponse d’une réservation pour un utilisateur donné
+                  value:
+                    data:
+                      booking_with_user_id:
+                        userid:
+                          id: "user-001"
+                          name: "Alice"
+                          last_active: 1697301123
+                          is_admin: false
+                        dates:
+                          - date: "2025-10-21"
+                            movies:
+                              - id: "m1"
+                                title: "Inception"
+                                director: "Christopher Nolan"
+                                rating: 8.8
 
 components:
   schemas:
-    Booking:
+    User:
       type: object
       properties:
-        userid:
+        id:
           type: string
-        dates:
-          type: array
-          items:
-            type: object
-            properties:
-              date:
-                type: string
-                format: date
-              movies:
-                type: array
-                items:
-                  type: string
-      required:
-        - userid
-        - dates
-
-    BookingDetails:
-      type: object
-      properties:
-        userid:
+        name:
           type: string
-        dates:
-          type: array
-          items:
-            type: object
-            properties:
-              date:
-                type: string
-                format: date
-              movies:
-                type: array
-                items:
-                  $ref: '#/components/schemas/MovieDetail'
-      required:
-        - userid
-        - dates
+        last_active:
+          type: integer
+        is_admin:
+          type: boolean
 
-    MovieDetail:
+    Movie:
       type: object
       properties:
         id:
           type: string
         title:
           type: string
-        rating:
-          type: number
         director:
           type: string
+        rating:
+          type: number
+          format: float
+
+    Date:
+      type: object
+      properties:
+        date:
+          type: string
+        movies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Movie'
+
+    Booking:
+      type: object
+      properties:
+        userid:
+          $ref: '#/components/schemas/User'
+        dates:
+          type: array
+          items:
+            $ref: '#/components/schemas/Date'
+
+  examples:
+    queryAll:
+      summary: Obtenir toutes les réservations
+      value: |
+        {
+          "query": "query { bookings_json { userid { id name last_active is_admin } dates { date movies { id title director rating } } } }"
+        }
+
+    queryByUser:
+      summary: Obtenir une réservation par identifiant utilisateur
+      value: |
+        {
+          "query": "query { booking_with_user_id(id: \"chris_rivers\") { userid { id name last_active is_admin } dates { date movies { id title director rating } } } }"
+        }
+
+    mutationAdd:
+      summary: Ajouter une réservation
+      value: |
+        {
+          "query": "mutation { add_booking(userid: \"chris_rivers\", date: \"20151201\", movieid: \"a8034f44-aee4-44cf-b32c-74cf452aaaaz\") { userid { id name } dates { date movies { id title } } } }"
+        }
+
+    mutationRemoveMovie:
+      summary: Supprimer un film d’une réservation donnée
+      value: |
+        {
+          "query": "mutation { remove_booking_with_movie_date_user(userid: \"dwight_schrute\", date: \"20151201\", movieid: \"7daf7208-be4d-4944-a3ae-c1c2f516f3e6\") { userid { id name } dates { date movies { id title } } } }"
+        }
+
+
+    mutationRemoveUser:
+      summary: Supprimer toutes les réservations d’un utilisateur
+      value: |
+        {
+          "query": "mutation { remove_bookings_with_user_id(userid: \"chris_rivers\") }"
+        }
