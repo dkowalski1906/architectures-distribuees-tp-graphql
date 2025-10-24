@@ -1,164 +1,62 @@
 openapi: 3.0.3
 info:
-  title: Movie Service API
-  description: API to manage movies, with admin checks via User service.
+  title: Movie GraphQL Microservice
   version: 1.0.0
+  description: API GraphQL pour la gestion des films (lecture, ajout, modification, suppression).
+
 servers:
   - url: http://localhost:3200
+    description: Service GraphQL Movie
+
 paths:
-  /{user_id}/movies/json:
-    get:
-      summary: Get all movies
-      description: Returns a list of all movies. User must be verified (admin check).
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: List of movies
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Movie'
-        '401':
-          description: Unable to verify user
-        '503':
-          description: User service unreachable
-
-  /{user_id}/movies/{movie_id}:
-    get:
-      summary: Get a movie by ID
-      description: Returns the movie matching the given ID.
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: movie_id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Movie found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Movie'
-        '500':
-          description: Movie ID not found
-
+  /graphql:
     post:
-      summary: Add a new movie
-      description: Adds a new movie. Admin required.
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: movie_id
-          in: path
-          required: true
-          schema:
-            type: string
+      summary: Exécuter une requête GraphQL sur les films
       requestBody:
-        description: Movie details
         required: true
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/Movie'
+            examples:
+              queryAll:
+                $ref: '#/components/examples/queryAll'
+              queryById:
+                $ref: '#/components/examples/queryById'
+              queryByTitle:
+                $ref: '#/components/examples/queryByTitle'
+              mutationAdd:
+                $ref: '#/components/examples/mutationAdd'
+              mutationUpdate:
+                $ref: '#/components/examples/mutationUpdate'
+              mutationRemove:
+                $ref: '#/components/examples/mutationRemove'
       responses:
-        '200':
-          description: Movie added
-        '403':
-          description: Unauthorized - admin access required
-        '500':
-          description: Movie ID already exists
-
-    put:
-      summary: Update movie rating
-      description: Updates the rating of an existing movie.
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: movie_id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: rate
-          in: path
-          required: true
-          schema:
-            type: number
-      responses:
-        '200':
-          description: Movie updated
+        "200":
+          description: Réponse GraphQL réussie
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/Movie'
-        '500':
-          description: Movie ID not found
-
-    delete:
-      summary: Delete a movie by ID
-      description: Deletes a movie. Admin required.
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: movie_id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Movie deleted
-        '403':
-          description: Unauthorized - admin access required
-        '500':
-          description: Movie ID not found
-
-  /{user_id}/movies/by_title:
-    get:
-      summary: Get a movie by title
-      description: Returns the movie matching the given title.
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: title
-          in: query
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Movie found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Movie'
-        '500':
-          description: Movie title not found
+              examples:
+                queryAllResponse:
+                  summary: Réponse de tous les films
+                  value:
+                    data:
+                      movies_json:
+                        - id: "720d006c-3a57-4b6a-b18f-9b713b073f3p"
+                          title: "Inception"
+                          rating: 8.8
+                          director: "Christopher Nolan"
+                        - id: "720d006c-3a57-4b6a-b18f-9b713b073f3u"
+                          title: "Matrix"
+                          rating: 8.7
+                          director: "Wachowski"
+                queryByIdResponse:
+                  summary: Réponse d’un film par ID
+                  value:
+                    data:
+                      movie_with_id:
+                        id: "720d006c-3a57-4b6a-b18f-9b713b073f3r"
+                        title: "Inception"
+                        rating: 8.8
+                        director: "Christopher Nolan"
 
 components:
   schemas:
@@ -171,6 +69,49 @@ components:
           type: string
         rating:
           type: number
-      required:
-        - id
-        - title
+          format: float
+        director:
+          type: string
+
+  examples:
+    queryAll:
+      summary: Obtenir tous les films
+      value: |
+        {
+          "query": "query { movies_json(user_id: \"chris_rivers\") { id title rating director } }"
+        }
+
+    queryById:
+      summary: Obtenir un film par ID
+      value: |
+        {
+          "query": "query { movie_with_id(user_id: \"chris_rivers\", id: \"720d006c-3a57-4b6a-b18f-9b713b073f3c\") { id title director rating } }"
+        }
+
+    queryByTitle:
+      summary: Obtenir un film par titre
+      value: |
+        {
+          "query": "query { movie_with_title(user_id: \"chris_rivers\", title: \"The Martian\") { id title director rating } }"
+        }
+
+    mutationAdd:
+      summary: Ajouter un film
+      value: |
+        {
+          "query": "mutation { add_movie(user_id: \"chris_rivers\", id: \"a8034f44-aee4-44cf-b32c-74cf452aaaaz\", title: \"Matrix\", rating: 8.7, director: \"Wachowski\") { id title rating director } }"
+        }
+
+    mutationUpdate:
+      summary: Modifier la note d’un film
+      value: |
+        {
+          "query": "mutation { update_movie_rate(user_id: \"chris_rivers\", id: \"720d006c-3a57-4b6a-b18f-9b713b073f3c\", rating: 9.0) { id title rating } }"
+        }
+
+    mutationRemove:
+      summary: Supprimer un film
+      value: |
+        {
+          "query": "mutation { remove_movie_with_id(user_id: \"chris_rivers\", id: \"720d006c-3a57-4b6a-b18f-9b713b073f3c\") { id title } }"
+        }
