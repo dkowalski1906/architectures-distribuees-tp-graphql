@@ -1,394 +1,226 @@
+import grpc
+from concurrent import futures
+import schedule_pb2
+import schedule_pb2_grpc
+import json
+import requests
 import time
-from flask import Flask, render_template, request, jsonify, make_response
-import json, requests
-from werkzeug.exceptions import NotFound
-from flask_cors import CORS
 
-app = Flask(__name__)
+movie_url = "http://localhost:3200"
+user_url = "http://localhost:3201"
 
-CORS(app)
-
-PORT = 3202
-HOST = '0.0.0.0'
-MOVIE_URL   = "http://localhost:3200" # microservice Movie
-USER_URL  = "http://localhost:3201" # microservice User
-
-CACHE_TTL = 60 # secondes de validité du cache pour is_admin
-
-# cache local pour stocker si un user est admin
-# format : { "user_id": {"is_admin": True/False, "timestamp": 123456789} }
+cache_ttl = 60
 user_admin_cache = {}
 
-# charge le fichier JSON contenant le planning
-with open('{}/databases/times.json'.format("."), "r") as jsf:
-    schedule = json.load(jsf)["schedule"]
 
-# sauvegarde le planning dans le fichier
-def write(times):
-    with open('{}/databases/times.json'.format("."), 'w') as f:
-        full = {}
-        full['schedule']=times
-        json.dump(full, f)
-
-# fonction utilitaire pour vérifier admin
 def verify_admin(user_id):
-    """
-    Check if a user is an admin, with caching.
-
-    Args:
-        user_id (str): ID of the user to check.
-
-    Returns:
-        tuple: (is_admin (bool), error_response (Response or None))
-               is_admin indicates if the user has admin privileges.
-               error_response is a Flask response object if verification fails.
-    """
     now = time.time()
 
-    # vérifie si on a une valeur en cache et qu'elle est encore valide
     if user_id in user_admin_cache:
         cached = user_admin_cache[user_id]
-        if now - cached["timestamp"] < CACHE_TTL:
+        if now - cached["timestamp"] < cache_ttl:
             return cached["is_admin"], None
 
-    # sinon appelle le microservice User
     try:
-        r = requests.get(f"{USER_URL}/users/{user_id}/is_admin")
-        if r.status_code == 200:
-            data = r.json()
-            is_admin = data.get("is_admin", False)
-            user_admin_cache[user_id] = {"is_admin": is_admin, "timestamp": now}
-            return is_admin, None
-        else:
-            return False, make_response(jsonify({"error": "Unable to verify user"}), 401)
-    except requests.exceptions.RequestException:
-        return False, make_response(jsonify({"error": "User service unreachable"}), 503)
+        response = requests.get(f"{user_url}/users/{user_id}/is_admin")
+        response.raise_for_status()
+        data = response.json()
+        is_admin = data.get("is_admin", False)
+        user_admin_cache[user_id] = {"is_admin": is_admin, "timestamp": now}
+        return is_admin, None
+
+    except requests.exceptions.HTTPError as e:
+        raise RuntimeError(f"Unable to verify user ({response.status_code}): {e}")
+    except requests.exceptions.RequestException as e:
+        raise RuntimeError(f"User service unreachable: {e}")
 
 
-# page d’accueil du service
-@app.route("/", methods=['GET'])
-def home():
-   """
-    Home endpoint
-    ---
-    responses:
-      200:
-        description: Welcome message
+def write(schedule_data):
+    with open("./databases/times.json", "w") as file:
+        json.dump({"schedule": schedule_data}, file)
+
+
+def fetch_movie_data(user_id, movie_id, context):
+    """Récupère un film depuis le microservice GraphQL"""
+    query = f"""
+    {{
+        movie_with_id(user_id: "{user_id}", id: "{movie_id}") {{
+            id
+            title
+            director
+            rating
+        }}
+    }}
     """
-   return "<h1 style='color:blue'>Welcome to the Schedule service!</h1>"
+    try:
+        response = requests.post(f"{movie_url}/graphql", json={"query": query})
+        response.raise_for_status()
+        data = response.json()
+        movie_details = data.get("data", {}).get("movie_with_id")
 
-# retourne tout le planning en JSON brut
-@app.route("/<user_id>/schedule/json", methods=['GET'])
-def get_json(user_id):
-    """
-    Get the full schedule in raw JSON format.
+        if not movie_details:
+            context.abort(grpc.StatusCode.NOT_FOUND, f"Movie not found for id {movie_id}")
 
-    Args:
-        user_id (str): ID of the requesting user.
+        return schedule_pb2.MovieData(
+            id=movie_details["id"],
+            title=movie_details["title"],
+            director=movie_details["director"],
+            rating=movie_details["rating"]
+        )
 
-    Returns:
-        Response: JSON response with the full schedule if the user is an admin,
-                  otherwise an error response.
-    """
-    _, error = verify_admin(user_id)
-    if error:
-        return error
+    except requests.exceptions.RequestException as e:
+        context.abort(grpc.StatusCode.UNAVAILABLE, f"Movie service unreachable: {e}")
 
-    res = make_response(jsonify(schedule), 200)
-    return res
 
-# récupère les films programmés pour une date précise
-@app.route("/<user_id>/schedule/<date>", methods=['GET'])
-def get_movies_by_date(user_id, date):
-    """
-    Get scheduled movies for a specific date.
+class ScheduleServicer(schedule_pb2_grpc.ScheduleServicer):
 
-    Args:
-        user_id (str): ID of the requesting user.
-        date (str): Date to retrieve movies for.
+    def __init__(self):
+        with open("./databases/times.json", "r") as js_file:
+            self.db = json.load(js_file)["schedule"]
 
-    Returns:
-        Response: JSON response with the list of movie IDs for the given date,
-                  or an error if no movies are found.
-    """
-    _, error = verify_admin(user_id)
-    if error:
-        return error
+    def _check_admin(self, user_id, context, require_admin=False):
+        try:
+            is_admin, _ = verify_admin(user_id)
+        except Exception as e:
+            context.abort(grpc.StatusCode.UNAVAILABLE, str(e))
+        if require_admin and not is_admin:
+            context.abort(grpc.StatusCode.PERMISSION_DENIED, "Admin access required")
+        return is_admin
 
-    for movies_date in schedule:
-        if str(movies_date["date"]) == str(date):
-            res = make_response(jsonify(movies_date["movies"]),200) # renvoi tous les movies direct suivant la date
-            return res
-    return make_response(jsonify({"error":"No movies found with this date"}),500)
+    def GetJson(self, request, context):
+        self._check_admin(request.userId, context)
+        for schedule in self.db:
+            movies = [
+                fetch_movie_data(request.userId, movie_id, context)
+                for movie_id in schedule["movies"]
+            ]
+            yield schedule_pb2.ScheduleData(date=schedule["date"], movies=movies)
 
-# récupère les films programmés pour une date avec leurs détails
-@app.route("/<user_id>/schedule/<date>/details", methods=['GET'])
-def get_movies_by_date_details(user_id, date):
-    """
-    Get scheduled movies with details for a specific date.
+    def GetMoviesByDate(self, request, context):
+        self._check_admin(request.userId, context)
+        for schedule in self.db:
+            if str(schedule["date"]) == str(request.date):
+                movies = [
+                    fetch_movie_data(request.userId, movie_id, context)
+                    for movie_id in schedule["movies"]
+                ]
+                return schedule_pb2.ScheduleData(date=schedule["date"], movies=movies)
+        context.abort(grpc.StatusCode.NOT_FOUND, "No movies found for this date")
 
-    Args:
-        user_id (str): ID of the requesting user.
-        date (str): Date to retrieve movie details for.
+    def GetScheduleByMovie(self, request, context):
+        self._check_admin(request.userId, context)
+        movie_id = request.movieId
+        if not movie_id:
+            context.abort(grpc.StatusCode.INVALID_ARGUMENT, "movieId not provided")
+        dates = [schedule["date"] for schedule in self.db if movie_id in schedule["movies"]]
+        if not dates:
+            context.abort(grpc.StatusCode.NOT_FOUND, "No dates found for this movie")
+        return schedule_pb2.DateData(dates=dates)
 
-    Returns:
-        Response: JSON response with movie details (from the Movie microservice),
-                  or an error if the date is not found.
-    """
-    _, error = verify_admin(user_id)
-    if error:
-        return error
+    def AddSchedule(self, request, context):
+        self._check_admin(request.userId, context, require_admin=True)
+        for schedule in self.db:
+            if str(schedule["date"]) == str(request.date):
+                context.abort(grpc.StatusCode.ALREADY_EXISTS, "Schedule date already exists")
 
-    for movies_date in schedule:
-        if str(movies_date["date"]) == str(date):
-            movies_detail = []
-            for movie_id in movies_date["movies"]:
-                try:
-                    r = requests.get(f"{MOVIE_URL}/{user_id}/movies/{movie_id}")
-                    if r.status_code == 200:
-                        movies_detail.append(r.json())
-                    else:
-                        movies_detail.append({"id": movie_id, "error": "movie not found"})
-                except requests.exceptions.RequestException:
-                    movies_detail.append({"id": movie_id, "error": "movie service unreachable"})
+        movies = [
+            fetch_movie_data(request.userId, movie_id, context)
+            for movie_id in request.moviesId
+        ]
+        new_entry = {"date": request.date, "movies": [movie.id for movie in movies]}
+        self.db.append(new_entry)
+        write(self.db)
+        return schedule_pb2.ScheduleData(date=request.date, movies=movies)
 
-            return make_response(jsonify({
-                "date": date,
-                "movies": movies_detail
-            }), 200)
+    def AddMovieToDate(self, request, context):
+        self._check_admin(request.userId, context, require_admin=True)
 
-    return make_response(jsonify({"error": "date not found"}), 404)
+        if not request.moviesId:
+            context.abort(grpc.StatusCode.INVALID_ARGUMENT, "At least one movieId required")
 
-# récupère toutes les dates où un film est projeté (via son ID en query param)
-@app.route("/<user_id>/schedule/by_movie", methods=['GET'])
-def get_schedule_by_movie_id(user_id):
-    """
-    Get all dates when a specific movie is scheduled.
+        target_date = str(request.date)
+        added_movies = []
+        existing_date = None
 
-    Args:
-        user_id (str): ID of the requesting user.
+        for schedule in self.db:
+            if str(schedule["date"]) == target_date:
+                existing_date = schedule
+                break
 
-    Query Parameters:
-        id (str): The movie ID to search for.
+        if existing_date:
+            already_scheduled = [
+                mid for mid in request.moviesId if mid in existing_date["movies"]
+            ]
+            if already_scheduled:
+                context.abort(
+                    grpc.StatusCode.ALREADY_EXISTS,
+                    f"Movies already scheduled for this date: {already_scheduled}"
+                )
 
-    Returns:
-        Response: JSON response with all dates the movie is scheduled,
-                  or an error if not found.
-    """
-    _, error = verify_admin(user_id)
-    if error:
-        return error
+            existing_date["movies"].extend(request.moviesId)
+            write(self.db)
 
-    movie_id = request.args.get("id") # récupère ?id=xxxx
-    
-    if not movie_id:
-        return make_response(jsonify({"error": "missing 'id' parameter"}), 400)
+            added_movies = [
+                fetch_movie_data(request.userId, mid, context)
+                for mid in existing_date["movies"]
+            ]
+            return schedule_pb2.ScheduleData(date=target_date, movies=added_movies)
 
-    # récupère toutes les dates où ce film apparaît
-    dates = [movies_date["date"] for movies_date in schedule if movie_id in movies_date["movies"]]
+        new_entry = {"date": target_date, "movies": list(request.moviesId)}
+        self.db.append(new_entry)
+        write(self.db)
 
-    if not dates:
-        return make_response(jsonify({"error": "no schedule found for this movie id"}), 404)
+        added_movies = [
+            fetch_movie_data(request.userId, mid, context)
+            for mid in request.moviesId
+        ]
+        return schedule_pb2.ScheduleData(date=target_date, movies=added_movies)
 
-    return make_response(jsonify({
-        "movie_id": movie_id,
-        "dates": dates
-    }), 200)
 
-# ajoute une nouvelle date (échoue si la date existe déjà)
-@app.route("/<user_id>/schedule/<date_id>", methods=['POST'])
-def add_date_schedule(user_id, date_id):
-    """
-    Add a new schedule entry for a given date.
+    def DeleteDate(self, request, context):
+        self._check_admin(request.userId, context, require_admin=True)
+        target_date = str(request.date)
 
-    Args:
-        user_id (str): ID of the requesting user.
-        date_id (str): Date to create a schedule for.
+        new_schedule = [s for s in self.db if str(s["date"]) != target_date]
+        if len(new_schedule) == len(self.db):
+            context.abort(grpc.StatusCode.NOT_FOUND, "Date not found")
 
-    Request Body:
-        {
-            "movies": [list of movie IDs] (optional)
-        }
+        self.db = new_schedule
+        write(self.db)
+        return schedule_pb2.Empty()
 
-    Returns:
-        Response: JSON message indicating success or error if date already exists.
-    """
-    is_admin, error = verify_admin(user_id)
-    if error:
-        return error
+    def DeleteMovieFromDate(self, request, context):
+        self._check_admin(request.userId, context, require_admin=True)
 
-    # si pas admin -> accès interdit
-    if not is_admin:
-        return make_response(jsonify({"error": "Unauthorized: admin access required"}), 403)
+        if not request.moviesId:
+            context.abort(grpc.StatusCode.INVALID_ARGUMENT, "moviesId list required")
 
-    req = request.get_json()
+        target_date = str(request.date)
+        movies_to_remove = set(request.moviesId)
 
-    # vérifie si la date existe déjà
-    for movies_date in schedule:
-        if str(movies_date["date"]) == str(date_id):
-            return make_response(jsonify({"error": "schedule date already exists"}), 500)
+        for schedule in self.db:
+            if str(schedule["date"]) == target_date:
+                existing_movies = set(schedule["movies"])
+                found_movies = movies_to_remove & existing_movies
 
-    # ajoute la nouvelle entrée (soit avec données du body, soit vide avec seulement l'ID)
-    new_entry = {
-        "date": date_id,
-        "movies": req.get("movies", []) # si pas fourni, on met []
-    }
-    schedule.append(new_entry)
-    write(schedule)
+                if not found_movies:
+                    context.abort(grpc.StatusCode.NOT_FOUND, "None of the movies found in this date")
 
-    return make_response(jsonify({"message": "schedule date added"}), 200)
+                schedule["movies"] = list(existing_movies - found_movies)
+                write(self.db)
+                return schedule_pb2.Empty()
 
-# ajoute un film à une date (crée la date si elle n’existe pas)
-@app.route("/<user_id>/schedule/<date>/movies", methods=['POST'])
-def add_movie_to_date(user_id, date):
-    """
-    Add a movie to an existing date or create a new date entry if it does not exist.
+        context.abort(grpc.StatusCode.NOT_FOUND, "Date not found")
 
-    Args:
-        user_id (str): ID of the requesting user.
-        date (str): Date to which the movie will be added.
 
-    Request Body:
-        {
-            "movie_id": "string" (required)
-        }
 
-    Returns:
-        Response: JSON message indicating success or error if the movie/date already exists.
-    """
-    is_admin, error = verify_admin(user_id)
-    if error:
-        return error
+def serve():
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    schedule_pb2_grpc.add_ScheduleServicer_to_server(ScheduleServicer(), server)
+    server.add_insecure_port("[::]:3202")
+    server.start()
+    server.wait_for_termination()
 
-    # si pas admin -> accès interdit
-    if not is_admin:
-        return make_response(jsonify({"error": "Unauthorized: admin access required"}), 403)
-
-    req = request.get_json()
-    movie_id = req.get("movie_id")
-
-    if not movie_id:
-        return make_response(jsonify({"error": "missing 'movie_id' in body"}), 400)
-
-    # cherche si la date existe déjà
-    for movies_date in schedule:
-        if str(movies_date["date"]) == str(date):
-            # si le film existe déjà dans la liste
-            if movie_id in movies_date["movies"]:
-                return make_response(jsonify({"error": "movie already scheduled for this date"}), 500)
-            
-            # sinon on ajoute
-            movies_date["movies"].append(movie_id)
-            write(schedule)
-            return make_response(jsonify({"message": "movie added to existing date"}), 200)
-
-    # si la date n'existe pas : on la crée
-    new_entry = {
-        "date": date,
-        "movies": [movie_id]
-    }
-    schedule.append(new_entry)
-    write(schedule)
-
-    return make_response(jsonify({"message": "new date created and movie added"}), 200)
-
-# supprime une date complète (tous les films inclus)
-@app.route("/<user_id>/schedule/<date_id>", methods=['DELETE'])
-def delete_date(user_id, date_id):
-    """
-    Delete an entire schedule entry (all movies) for a given date.
-
-    Args:
-        user_id (str): ID of the requesting user.
-        date_id (str): Date to delete.
-
-    Returns:
-        Response: JSON message confirming deletion or error if the date is not found.
-    """
-    is_admin, error = verify_admin(user_id)
-    if error:
-        return error
-
-    # si pas admin -> accès interdit
-    if not is_admin:
-        return make_response(jsonify({"error": "Unauthorized: admin access required"}), 403)
-
-    global schedule # variable faisant référence en dehors fonction
-    new_schedule = [s for s in schedule if str(s["date"]) != str(date_id)]
-
-    if len(new_schedule) == len(schedule):
-        return make_response(jsonify({"error": "date not found"}), 404)
-
-    schedule = new_schedule
-    write(schedule)
-    return make_response(jsonify({"message": f"date {date_id} deleted"}), 200)
-
-# supprime un film d’une date précise
-@app.route("/<user_id>/schedule/<date_id>/movies/<movie_id>", methods=['DELETE'])
-def delete_movie_from_date(user_id, date_id, movie_id):
-    """
-    Delete a specific movie from a given date.
-
-    Args:
-        user_id (str): ID of the requesting user.
-        date_id (str): Date of the schedule.
-        movie_id (str): ID of the movie to remove.
-
-    Returns:
-        Response: JSON message confirming removal or error if not found.
-    """
-    is_admin, error = verify_admin(user_id)
-    if error:
-        return error
-
-    # si pas admin -> accès interdit
-    if not is_admin:
-        return make_response(jsonify({"error": "Unauthorized: admin access required"}), 403)
-
-    for s in schedule:
-        if str(s["date"]) == str(date_id):
-            if movie_id in s["movies"]:
-                s["movies"].remove(movie_id)
-                write(schedule)
-                return make_response(jsonify({"message": f"movie {movie_id} removed from date {date_id}"}), 200)
-            return make_response(jsonify({"error": "movie not found in this date"}), 404)
-    
-    return make_response(jsonify({"error": "date not found"}), 404)
-
-# supprime un film de toutes les dates
-@app.route("/<user_id>/schedule/movies/<movie_id>", methods=['DELETE'])
-def delete_movie_from_all_dates(user_id, movie_id):
-    """
-    Delete a specific movie from all scheduled dates.
-
-    Args:
-        user_id (str): ID of the requesting user.
-        movie_id (str): ID of the movie to remove.
-
-    Returns:
-        Response: JSON message confirming removal from all dates,
-                  or error if the movie was not scheduled.
-    """
-    is_admin, error = verify_admin(user_id)
-    if error:
-        return error
-
-    # si pas admin -> accès interdit
-    if not is_admin:
-        return make_response(jsonify({"error": "Unauthorized: admin access required"}), 403)
-
-    found = False
-    for s in schedule:
-        if movie_id in s["movies"]:
-            s["movies"].remove(movie_id)
-            found = True
-
-    if not found:
-        return make_response(jsonify({"error": "movie not found in any date"}), 404)
-
-    write(schedule)
-    return make_response(jsonify({"message": f"movie {movie_id} removed from all dates"}), 200)
 
 if __name__ == "__main__":
-   print("Server running in port %s"%(PORT))
-   app.run(host=HOST, port=PORT)
+    serve()
