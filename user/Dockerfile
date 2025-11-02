@@ -1,28 +1,17 @@
-FROM python:3.11-slim
+# Use a lightweight Python 3.11 image based on Alpine Linux
+FROM python:3.11-alpine
 
+# Set the working directory inside the container
 WORKDIR /app
 
-# creates a user no-root called appuser
-RUN adduser --disabled-password --gecos "" appuser || true
+# Copy the dependency file to the working directory
+COPY requirements.txt /app
 
-# copy the requirements file in the workdir
-COPY requirements.txt /app/requirements.txt
+# Install Python dependencies listed in requirements.txt
+RUN pip install -r requirements.txt
 
-# install the Python requirements
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r /app/requirements.txt
+# Copy the application source code and database files into the container
+COPY user/ /app/
 
-# copy the app files and directories
-COPY . /app
-RUN chown -R appuser:appuser /app
-
-USER appuser
-
-# environment variable to default (editable with "-e" during the execution)
-ENV USE_DOCKER=1 \
-    PYTHONUNBUFFERED=1
-
-EXPOSE 8000
-
-# run the application
-CMD ["python", "user/user.py"]
+# Run the Python application when the container starts
+CMD ["python", "-u", "user.py"]

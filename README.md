@@ -27,11 +27,78 @@ Nous avons mis en place un système **admin/user** dans notre architecture micro
 Avant toute chose, assurez-vous d’avoir :
 - **Docker** installé et en fonctionnement
 - **Python 3.10+** installé (pour les exécutions locales)
-- Le fichier `requirements.txt` à jour dans chaque microservice
+- Le fichier `requirements.txt` à jour
 
 ---
 
 ## Utilisation avec Docker
+
+### Gestion du microservice Movie
+
+Commencez par construire l'image :
+```bash
+docker build -t movie-app -f movie/Dockerfile .
+```
+
+Ensuite, vous pouvez lancer le microservice avec le fichier JSON local :
+```bash
+docker run --rm -it -p 3200:3200 movie-app
+```
+
+Désormais, le contenur pour le microservice Movie est prêt à être utilisé. Vous pouvez tester l'url de base avec :
+```code
+http://localhost:3200
+```
+
+
+### Gestion du microservice Booking
+
+Commencez par construire l'image :
+```bash
+docker build -t booking-app -f booking/Dockerfile .
+```
+
+Ensuite, vous pouvez lancer le microservice avec le fichier JSON local :
+```bash
+docker run --rm -it -p 3203:3203 booking-app
+```
+
+Désormais, le contenur pour le microservice Booking est prêt à être utilisé. Vous pouvez tester l'url de base avec :
+```code
+http://localhost:3203
+```
+
+
+### Gestion du microservice User
+
+Commencez par construire l'image :
+```bash
+docker build -t user-app -f user/Dockerfile .
+```
+
+Ensuite, vous pouvez lancer le microservice avec le fichier JSON local :
+```bash
+docker run --rm -it -p 3201:3201 user-app
+```
+
+Désormais, le contenur pour le microservice User est prêt à être utilisé. Vous pouvez tester l'url de base avec :
+```code
+http://localhost:3201
+```
+
+Si vous voulez tester une url non-autorisé en tant que non-admin, vous pouvez utiliser l'url suivante :
+```code
+http://localhost:3201/peter_curley/users/json
+```
+
+ou une en tant qu'admin :
+```code
+http://localhost:3201/chris_rivers/users/json
+```
+
+---
+
+
 
 ### Construire les images
 
@@ -58,17 +125,6 @@ docker run --rm -p 3202:3202 \
   -v "$(pwd)/schedule/databases:/app/databases" \
   -e USE_DOCKER=1 \
   schedule
-```
-
-### Options utiles
-
-Exécuter en arrière-plan :
-Ajoutez `-d` après `docker run`
-
-Monter un fichier particulier :
-
-```bash
--v "$(pwd)/user/databases/users.json:/app/databases/users.json"
 ```
 
 ## Exécution locale (sans Docker)

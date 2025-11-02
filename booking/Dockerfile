@@ -1,16 +1,17 @@
-FROM python
-# can you find a lighter image?
+# Use a lightweight Python 3.11 image based on Alpine Linux
+FROM python:3.11-alpine
 
+# Set the working directory inside the container
 WORKDIR /app
 
-# copy the requirements file in the workdir
-RUN
+# Copy the dependency file to the working directory
+COPY requirements.txt /app
 
-# install the Python requirements
-RUN
+# Install Python dependencies listed in requirements.txt
+RUN pip install -r requirements.txt
 
-# copy the app files and directories
-RUN
+# Copy the application source code into the container
+COPY booking/ /app/
 
-# start booking.py when the container is started
-CMD 
+# Run the Python application when the container starts
+CMD ["python", "-u", "booking.py"]
