@@ -33,7 +33,7 @@ Avant toute chose, assurez-vous d’avoir :
 
 ## Utilisation avec Docker
 
-### Gestion du microservice Movie
+### Gestion du microservice Movie (GraphQL)
 
 Commencez par construire l'image :
 ```bash
@@ -51,7 +51,7 @@ http://localhost:3200
 ```
 
 
-### Gestion du microservice Booking
+### Gestion du microservice Booking (GraphQL)
 
 Commencez par construire l'image :
 ```bash
@@ -69,7 +69,7 @@ http://localhost:3203
 ```
 
 
-### Gestion du microservice User
+### Gestion du microservice User (REST)
 
 Commencez par construire l'image :
 ```bash
@@ -95,6 +95,38 @@ ou une en tant qu'admin :
 ```code
 http://localhost:3201/chris_rivers/users/json
 ```
+
+
+### Gestion du microservice Schedule (gRPC)
+
+**IMPORTANT : Communication inter-services**
+
+Le microservice Schedule communique avec :
+- User : pour vérifier les droits administrateur (http://localhost:3201)
+- Movie : pour récupérer les détails des films (http://localhost:3200)
+
+**Assurez-vous que ces services sont démarrés avant de lancer Schedule.**
+
+Commencez par construire l'image :
+```bash
+docker build -t schedule-app -f schedule/Dockerfile .
+```
+
+Ensuite, vous pouvez lancer le microservice avec le fichier JSON local :
+```bash
+docker run --rm -it -p 3202:3202 schedule-app
+```
+
+Désormais, le microservice Schedule attend car c'est un serveur gRPC, pas un serveur HTTP classique (comme Flask).
+Ainsi, il :
+- écoute sur le port 3202.
+- ne renvoie rien dans le terminal tant qu’aucun client gRPC ne s’y connecte.
+- reste bloqué sur `server.wait_for_termination()`, ce qui est normal : c’est une boucle d’attente.
+
+Donc le terminal **“en cours”** indique simplement que le serveur tourne et écoute correctement.
+(ATTENTION : ne pas fermer si vous voulez que le service reste actif)
+
+
 
 ---
 
