@@ -2,9 +2,13 @@ import json
 from graphql import GraphQLError
 import requests, time
 
-SCHEDULE_URL = "http://localhost:3202" # service Schedule
-MOVIE_URL   = "http://localhost:3200" # service Movie
-USER_URL  = "http://localhost:3201" # microservice User
+from schedule_client import get_schedule_client
+import schedule_pb2
+import grpc
+schedule = get_schedule_client()
+
+MOVIE_URL   = "http://movie:3200" # service Movie
+USER_URL  = "http://user:3201" # microservice User
 
 # cache local pour stocker si un user est admin
 CACHE_TTL = 60 # secondes de validité du cache pour is_admin
@@ -113,7 +117,19 @@ def add_booking(_, info, user_id, userid, date, movieid):
         raise GraphQLError("Unauthorized: admin access required")
 
     # vérifie auprès de Schedule que le film est dispo à cette date
-    # TODO à faire avec requête gRCP
+    try:
+        response = schedule.GetMoviesByDate(
+            schedule_pb2.GetMoviesByDateRequest(
+                userId=user_id,
+                date=str(date)
+            )
+        )
+        movie_ids = [m.id for m in response.movies]
+        if movieid not in movie_ids:
+            raise GraphQLError("Movie not scheduled on this date")
+
+    except grpc.RpcError as e:
+        raise GraphQLError(f"Schedule service error: {e.details()}")
 
     # si l’utilisateur existe déjà
     for b in bookings:
