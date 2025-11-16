@@ -2,27 +2,36 @@ import grpc
 from concurrent import futures
 import schedule_pb2
 import schedule_pb2_grpc
-import json
 import requests
 import time
 
-movie_url = "http://movie:3200"
-user_url = "http://user:3201"
+# Import de la configuration
+import config
 
-cache_ttl = 60
+# Affichage de la configuration au démarrage
+config.print_config()
+
+# Récupération du repository approprié (JSON ou MongoDB)
+schedule_repository = config.get_schedule_repository()
+
+# Cache pour les vérifications admin
 user_admin_cache = {}
 
+# ============================================================================
+# FONCTIONS UTILITAIRES
+# ============================================================================
 
 def verify_admin(user_id):
+    """Vérifie si un utilisateur est admin avec cache"""
     now = time.time()
 
     if user_id in user_admin_cache:
         cached = user_admin_cache[user_id]
-        if now - cached["timestamp"] < cache_ttl:
+        if now - cached["timestamp"] < config.CACHE_TTL:
             return cached["is_admin"], None
 
     try:
-        response = requests.get(f"{user_url}/users/{user_id}/is_admin")
+        response = requests.get(f"{config.USER_BASE_URL}/users/{user_id}/is_admin")
         response.raise_for_status()
         data = response.json()
         is_admin = data.get("is_admin", False)
@@ -35,28 +44,32 @@ def verify_admin(user_id):
         raise RuntimeError(f"User service unreachable: {e}")
 
 
-def write(schedule_data):
-    with open("./databases/times.json", "w") as file:
-        json.dump({"schedule": schedule_data}, file)
-
-
 def fetch_movie_data(user_id, movie_id, context):
-    """Récupère un film depuis le microservice GraphQL"""
-    query = f"""
-    {{
-        movie_with_id(user_id: "{user_id}", id: "{movie_id}") {{
+    """Récupère un film depuis le microservice Movie (GraphQL)"""
+    query = """
+    query GetMovie($id: String!) {
+        movie_by_id(id: $id) {
             id
             title
             director
             rating
-        }}
-    }}
+        }
+    }
     """
+
     try:
-        response = requests.post(f"{movie_url}/graphql", json={"query": query})
+        response = requests.post(
+            f"{config.MOVIE_BASE_URL}/{user_id}/graphql",
+            json={"query": query, "variables": {"id": movie_id}}
+        )
         response.raise_for_status()
         data = response.json()
-        movie_details = data.get("data", {}).get("movie_with_id")
+
+        # Gestion des erreurs GraphQL
+        if "errors" in data:
+            context.abort(grpc.StatusCode.NOT_FOUND, f"Movie not found for id {movie_id}")
+
+        movie_details = data.get("data", {}).get("movie_by_id")
 
         if not movie_details:
             context.abort(grpc.StatusCode.NOT_FOUND, f"Movie not found for id {movie_id}")
@@ -72,13 +85,14 @@ def fetch_movie_data(user_id, movie_id, context):
         context.abort(grpc.StatusCode.UNAVAILABLE, f"Movie service unreachable: {e}")
 
 
+# ============================================================================
+# SERVICE gRPC
+# ============================================================================
+
 class ScheduleServicer(schedule_pb2_grpc.ScheduleServicer):
 
-    def __init__(self):
-        with open("./databases/times.json", "r") as js_file:
-            self.db = json.load(js_file)["schedule"]
-
     def _check_admin(self, user_id, context, require_admin=False):
+        """Vérifie les droits admin"""
         try:
             is_admin, _ = verify_admin(user_id)
         except Exception as e:
@@ -88,8 +102,12 @@ class ScheduleServicer(schedule_pb2_grpc.ScheduleServicer):
         return is_admin
 
     def GetJson(self, request, context):
+        """Récupère tous les horaires"""
         self._check_admin(request.userId, context)
-        for schedule in self.db:
+
+        schedules = schedule_repository.get_all_schedules()
+
+        for schedule in schedules:
             movies = [
                 fetch_movie_data(request.userId, movie_id, context)
                 for movie_id in schedule["movies"]
@@ -97,131 +115,126 @@ class ScheduleServicer(schedule_pb2_grpc.ScheduleServicer):
             yield schedule_pb2.ScheduleData(date=schedule["date"], movies=movies)
 
     def GetMoviesByDate(self, request, context):
+        """Récupère les films pour une date donnée"""
         self._check_admin(request.userId, context)
-        for schedule in self.db:
-            if str(schedule["date"]) == str(request.date):
-                movies = [
-                    fetch_movie_data(request.userId, movie_id, context)
-                    for movie_id in schedule["movies"]
-                ]
-                return schedule_pb2.ScheduleData(date=schedule["date"], movies=movies)
-        context.abort(grpc.StatusCode.NOT_FOUND, "No movies found for this date")
 
-    def GetScheduleByMovie(self, request, context):
-        self._check_admin(request.userId, context)
-        movie_id = request.movieId
-        if not movie_id:
-            context.abort(grpc.StatusCode.INVALID_ARGUMENT, "movieId not provided")
-        dates = [schedule["date"] for schedule in self.db if movie_id in schedule["movies"]]
-        if not dates:
-            context.abort(grpc.StatusCode.NOT_FOUND, "No dates found for this movie")
-        return schedule_pb2.DateData(dates=dates)
+        schedule = schedule_repository.get_schedule_by_date(request.date)
 
-    def AddSchedule(self, request, context):
-        self._check_admin(request.userId, context, require_admin=True)
-        for schedule in self.db:
-            if str(schedule["date"]) == str(request.date):
-                context.abort(grpc.StatusCode.ALREADY_EXISTS, "Schedule date already exists")
+        if not schedule:
+            context.abort(grpc.StatusCode.NOT_FOUND, "No movies found for this date")
 
         movies = [
             fetch_movie_data(request.userId, movie_id, context)
-            for movie_id in request.moviesId
+            for movie_id in schedule["movies"]
         ]
-        new_entry = {"date": request.date, "movies": [movie.id for movie in movies]}
-        self.db.append(new_entry)
-        write(self.db)
-        return schedule_pb2.ScheduleData(date=request.date, movies=movies)
+        return schedule_pb2.ScheduleData(date=schedule["date"], movies=movies)
+
+    def GetScheduleByMovie(self, request, context):
+        """Récupère les dates où un film est programmé"""
+        self._check_admin(request.userId, context)
+
+        movie_id = request.movieId
+        if not movie_id:
+            context.abort(grpc.StatusCode.INVALID_ARGUMENT, "movieId not provided")
+
+        dates = schedule_repository.get_dates_by_movie(movie_id)
+
+        if not dates:
+            context.abort(grpc.StatusCode.NOT_FOUND, "No dates found for this movie")
+
+        return schedule_pb2.DateData(dates=dates)
+
+    def AddSchedule(self, request, context):
+        """Ajoute un nouvel horaire complet"""
+        self._check_admin(request.userId, context, require_admin=True)
+
+        try:
+            # Vérifie que tous les films existent
+            movies = [
+                fetch_movie_data(request.userId, movie_id, context)
+                for movie_id in request.moviesId
+            ]
+
+            # Ajoute l'horaire
+            schedule_data = {
+                "date": request.date,
+                "movies": [movie.id for movie in movies]
+            }
+            schedule_repository.add_schedule(schedule_data)
+
+            return schedule_pb2.ScheduleData(date=request.date, movies=movies)
+
+        except ValueError as e:
+            context.abort(grpc.StatusCode.ALREADY_EXISTS, str(e))
 
     def AddMovieToDate(self, request, context):
+        """Ajoute des films à une date"""
         self._check_admin(request.userId, context, require_admin=True)
 
         if not request.moviesId:
             context.abort(grpc.StatusCode.INVALID_ARGUMENT, "At least one movieId required")
 
-        target_date = str(request.date)
-        added_movies = []
-        existing_date = None
+        try:
+            # Ajoute les films (ou crée la date si elle n'existe pas)
+            schedule = schedule_repository.add_movies_to_date(
+                request.date,
+                list(request.moviesId)
+            )
 
-        for schedule in self.db:
-            if str(schedule["date"]) == target_date:
-                existing_date = schedule
-                break
-
-        if existing_date:
-            already_scheduled = [
-                mid for mid in request.moviesId if mid in existing_date["movies"]
+            # Récupère les détails de tous les films
+            movies = [
+                fetch_movie_data(request.userId, movie_id, context)
+                for movie_id in schedule["movies"]
             ]
-            if already_scheduled:
-                context.abort(
-                    grpc.StatusCode.ALREADY_EXISTS,
-                    f"Movies already scheduled for this date: {already_scheduled}"
-                )
 
-            existing_date["movies"].extend(request.moviesId)
-            write(self.db)
+            return schedule_pb2.ScheduleData(date=request.date, movies=movies)
 
-            added_movies = [
-                fetch_movie_data(request.userId, mid, context)
-                for mid in existing_date["movies"]
-            ]
-            return schedule_pb2.ScheduleData(date=target_date, movies=added_movies)
-
-        new_entry = {"date": target_date, "movies": list(request.moviesId)}
-        self.db.append(new_entry)
-        write(self.db)
-
-        added_movies = [
-            fetch_movie_data(request.userId, mid, context)
-            for mid in request.moviesId
-        ]
-        return schedule_pb2.ScheduleData(date=target_date, movies=added_movies)
-
+        except ValueError as e:
+            context.abort(grpc.StatusCode.ALREADY_EXISTS, str(e))
 
     def DeleteDate(self, request, context):
+        """Supprime un horaire complet"""
         self._check_admin(request.userId, context, require_admin=True)
-        target_date = str(request.date)
 
-        new_schedule = [s for s in self.db if str(s["date"]) != target_date]
-        if len(new_schedule) == len(self.db):
+        if not schedule_repository.delete_schedule(request.date):
             context.abort(grpc.StatusCode.NOT_FOUND, "Date not found")
 
-        self.db = new_schedule
-        write(self.db)
         return schedule_pb2.Empty()
 
     def DeleteMovieFromDate(self, request, context):
+        """Supprime des films d'une date"""
         self._check_admin(request.userId, context, require_admin=True)
 
         if not request.moviesId:
             context.abort(grpc.StatusCode.INVALID_ARGUMENT, "moviesId list required")
 
-        target_date = str(request.date)
-        movies_to_remove = set(request.moviesId)
+        try:
+            schedule_repository.delete_movies_from_date(
+                request.date,
+                list(request.moviesId)
+            )
+            return schedule_pb2.Empty()
 
-        for schedule in self.db:
-            if str(schedule["date"]) == target_date:
-                existing_movies = set(schedule["movies"])
-                found_movies = movies_to_remove & existing_movies
-
-                if not found_movies:
-                    context.abort(grpc.StatusCode.NOT_FOUND, "None of the movies found in this date")
-
-                schedule["movies"] = list(existing_movies - found_movies)
-                write(self.db)
-                return schedule_pb2.Empty()
-
-        context.abort(grpc.StatusCode.NOT_FOUND, "Date not found")
+        except ValueError as e:
+            context.abort(grpc.StatusCode.NOT_FOUND, str(e))
 
 
+# ============================================================================
+# DÉMARRAGE DU SERVEUR gRPC
+# ============================================================================
 
 def serve():
-    print("Schedule gRPC service started on port 3202")
+    print(f"Schedule gRPC service started on port {config.SCHEDULE_PORT}")
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     schedule_pb2_grpc.add_ScheduleServicer_to_server(ScheduleServicer(), server)
-    server.add_insecure_port("[::]:3202")
+    server.add_insecure_port(f"[::]:{config.SCHEDULE_PORT}")
     server.start()
     server.wait_for_termination()
 
 
 if __name__ == "__main__":
-    serve()
+    try:
+        serve()
+    finally:
+        if config.USE_MONGODB:
+            schedule_repository.close()

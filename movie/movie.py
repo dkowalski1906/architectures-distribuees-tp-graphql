@@ -1,60 +1,155 @@
-from ariadne import graphql_sync, make_executable_schema, load_schema_from_path, ObjectType, QueryType, MutationType
-from flask import Flask, request, jsonify, make_response
-import time, json, requests
-from werkzeug.exceptions import NotFound
-from flask_cors import CORS
-import resolvers as r
+from flask import Flask, request, jsonify
+from datetime import datetime
+import requests
 
+from ariadne import QueryType, MutationType, make_executable_schema, graphql_sync, ObjectType
+from ariadne.explorer import ExplorerGraphiQL
+
+explorer = ExplorerGraphiQL().html(None)
+
+import config
+
+# Initialisation Flask
 app = Flask(__name__)
+config.print_config()
+movie_repository = config.get_movie_repository()
+user_admin_cache = {}
 
-CORS(app)
+# ============================================================================
+# UTILITAIRES
+# ============================================================================
 
-PORT = 3200
-HOST = '0.0.0.0'
+def is_user_admin(user_id: str) -> bool:
+    current_time = datetime.now()
 
-# création du schéma GraphQL
-type_defs = load_schema_from_path('movie.graphql')
+    if user_id in user_admin_cache:
+        cached = user_admin_cache[user_id]
+        if (current_time - cached['timestamp']).total_seconds() < config.CACHE_TTL:
+            return cached['is_admin']
+
+    try:
+        url = f"{config.USER_BASE_URL}/users/{user_id}/is_admin"
+        resp = requests.get(url, timeout=5)
+
+        if resp.status_code == 200:
+            is_admin = resp.json().get("is_admin", False)
+            user_admin_cache[user_id] = {
+                "is_admin": is_admin,
+                "timestamp": current_time
+            }
+            return is_admin
+    except:
+        pass
+    return False
+
+# ============================================================================
+# SCHEMA ARIADNE
+# ============================================================================
+
+type_defs = """
+    type Movie {
+        id: String
+        title: String
+        director: String
+        rating: Float
+    }
+
+    type Query {
+        all_movies: [Movie!]
+        movie_by_id(id: String!): Movie
+        movie_by_title(title: String!): Movie
+        movies_by_director(director: String!): [Movie!]
+        movies_by_rating(min_rating: Float!): [Movie!]
+    }
+
+    type Mutation {
+        add_movie(title: String!, director: String!, rating: Float!): Movie
+    }
+"""
 
 query = QueryType()
 mutation = MutationType()
+movie_obj = ObjectType("Movie")
 
-movie = ObjectType('Movie')
+# ============================================================================
+# RESOLVERS QUERY
+# ============================================================================
 
-query.set_field('movie_with_id', r.movie_with_id)
-query.set_field('movie_with_title', r.movie_with_title)
-query.set_field('movies_json', r.movies_json)
+@query.field("all_movies")
+def resolve_all_movies(_, info):
+    return movie_repository.get_all_movies()
 
-mutation.set_field('add_movie', r.add_movie)
-mutation.set_field('update_movie_rate', r.update_movie_rate)
-mutation.set_field('remove_movie_with_id', r.remove_movie_with_id)
+@query.field("movie_by_id")
+def resolve_movie_by_id(_, info, id):
+    return movie_repository.get_movie_by_id(id)
 
-schema = make_executable_schema(type_defs, movie, query, mutation)
+@query.field("movie_by_title")
+def resolve_movie_by_title(_, info, title):
+    return movie_repository.get_movie_by_title(title)
 
-# page d’accueil du service
-@app.route("/", methods=['GET'])
-def home():
-    """
-    Home endpoint for the Movie service.
+@query.field("movies_by_director")
+def resolve_movies_by_director(_, info, director):
+    return movie_repository.get_movies_by_director(director)
 
-    Returns:
-        Response: HTML welcome message.
-    """
-    return make_response("<h1 style='color:blue'>Welcome to the Movie service!</h1>",200)
+@query.field("movies_by_rating")
+def resolve_movies_by_rating(_, info, min_rating):
+    return movie_repository.get_movies_by_rating(min_rating)
 
-# route GraphQL
-@app.route('/graphql', methods=['POST'])
-def graphql_server():
+# ============================================================================
+# RESOLVER MUTATION
+# ============================================================================
+
+@mutation.field("add_movie")
+def resolve_add_movie(_, info, title, director, rating):
+    user_id = info.context.get("user_id")
+
+    if not is_user_admin(user_id):
+        raise Exception("Accès refusé : droits administrateur requis")
+
+    new_movie = movie_repository.add_movie({
+        "title": title,
+        "director": director,
+        "rating": rating
+    })
+    return new_movie
+
+# ============================================================================
+# SCHEMA FINAL
+# ============================================================================
+
+schema = make_executable_schema(type_defs, query, mutation, movie_obj)
+
+# ============================================================================
+# ROUTES
+# ============================================================================
+
+@app.route("/<user_id>/graphql", methods=["GET"])
+def graphql_playground(user_id):
+    return explorer, 200
+
+@app.route("/<user_id>/graphql", methods=["POST"])
+def graphql_server(user_id):
     data = request.get_json()
-    success, result = graphql_sync(
-                        schema,
-                        data,
-                        context_value=None,
-                        debug=app.debug
-                    )
-    status_code = 200 if success else 400
-    return jsonify(result), status_code
+    context = {"user_id": user_id}
+    success, result = graphql_sync(schema, data, context_value=context)
+    return jsonify(result), 200
+
+@app.route("/health", methods=["GET"])
+def health_check():
+    return jsonify({
+        "status": "healthy",
+        "service": "movie",
+        "using_mongodb": config.USE_MONGODB,
+        "using_docker": config.USE_DOCKER
+    }), 200
+
+# ============================================================================
+# DÉMARRAGE
+# ============================================================================
 
 if __name__ == "__main__":
-    #p = sys.argv[1]
-    print("Server running in port %s"%(PORT))
-    app.run(host=HOST, port=PORT)
+    try:
+        app.run(host="0.0.0.0", port=config.MOVIE_PORT, debug=True)
+    finally:
+        if config.USE_MONGODB:
+            movie_repository.close()
