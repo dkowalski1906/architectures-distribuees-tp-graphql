@@ -34,6 +34,30 @@ Le système supporte deux modes de stockage :
 - Python 3.10+ (pour exécution locale)
 - grpcurl (pour tester le service Schedule)
 
+### Environnement virtuel Python (pour exécution locale)
+
+Si vous souhaitez exécuter les services en local (hors Docker), créez d'abord un environnement virtuel Python :
+
+```bash
+# Créer l'environnement virtuel
+python3 -m venv venv
+
+# Activer l'environnement virtuel
+# Sur macOS/Linux :
+source venv/bin/activate
+
+# Sur Windows :
+venv\Scripts\activate
+
+# Installer les dépendances pour tous les services
+pip install -r requirements.txt
+```
+
+**Note :** L'environnement virtuel doit rester activé pendant l'utilisation locale des services. Pour le désactiver :
+```bash
+deactivate
+```
+
 ### Lancement avec Docker + MongoDB (Recommandé)
 
 ```bash
@@ -58,10 +82,10 @@ Cette commande :
 # Docker + JSON
 make docker-json
 
-# Local + MongoDB
+# Local + MongoDB (nécessite l'environnement virtuel activé)
 make local-mongo
 
-# Local + JSON
+# Local + JSON (nécessite l'environnement virtuel activé)
 make local-json
 ```
 
@@ -301,6 +325,18 @@ Nettoyage complet et redémarrage :
 ```bash
 make clean
 make docker-mongo
+```
+
+### Problèmes avec l'environnement virtuel Python
+
+Si vous rencontrez des erreurs de dépendances en exécution locale :
+```bash
+# Vérifier que l'environnement virtuel est bien activé
+which python  # Doit pointer vers venv/bin/python
+
+# Réinstaller les dépendances
+pip install --upgrade pip
+pip install -r user/requirements.txt -r movie/requirements.txt -r booking/requirements.txt -r schedule/requirements.txt
 ```
 
 ## Utilisateurs de test

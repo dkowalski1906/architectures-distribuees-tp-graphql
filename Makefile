@@ -96,7 +96,7 @@ docker-json:
 # ============================================================================
 local-mongo:
 	@echo "$(YELLOW)⚠️  Mode local + MongoDB$(NC)"
-	@echo "$(YELLOW)Prérequis : MongoDB doit être installé et démarré en local$(NC)"
+	@echo "$(YELLOW)Prérequis : MongoDB doit être installé et lancé en local. Un environnement virtuel est recommandé ainsi que l’installation des dépendances.$(NC)"
 	@echo ""
 	@echo "USE_DOCKER=false" > .env
 	@echo "USE_MONGODB=true" >> .env

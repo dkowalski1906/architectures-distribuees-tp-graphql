@@ -87,7 +87,6 @@ def print_config():
         print(f"MongoDB Database  : {MONGO_DB_NAME}")
     else:
         print(f"JSON Data Path    : {JSON_DATA_PATH}")
-    print(f"Booking Service   : {BOOKING_BASE_URL}")
     print(f"User Service      : {USER_BASE_URL}")
     print(f"Cache TTL         : {CACHE_TTL}s")
     print("=" * 60)
